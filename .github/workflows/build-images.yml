@@ -65,7 +65,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Backend
-          file: ./Backend/Dockerfile
+          dockerfile: Dockerfile
+          target: final
           platforms: linux/arm64,linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-backend.outputs.tags }}
@@ -77,7 +78,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Frontend
-          file: ./Frontend/Dockerfile
+          dockerfile: Dockerfile
+          target: final
           platforms: linux/arm64,linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-frontend.outputs.tags }}
