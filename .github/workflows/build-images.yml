@@ -25,26 +25,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Display directory structure
-        run: |
-          echo "=== Repository Root ===" 
-          ls -la /home/runner/work/HealthTracking/HealthTracking/
-          echo ""
-          echo "=== Backend Directory ===" 
-          ls -la /home/runner/work/HealthTracking/HealthTracking/Backend/
-          echo ""
-          echo "=== Frontend Directory ===" 
-          ls -la /home/runner/work/HealthTracking/HealthTracking/Frontend/
-          echo ""
-          echo "=== Backend Dockerfile ===" 
-          file /home/runner/work/HealthTracking/HealthTracking/Backend/Dockerfile
-          echo ""
-          echo "=== Frontend Dockerfile ===" 
-          file /home/runner/work/HealthTracking/HealthTracking/Frontend/Dockerfile
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
