@@ -65,7 +65,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Backend
-          dockerfile: Dockerfile
+          file: Dockerfile
           target: final
           platforms: linux/arm64,linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
@@ -78,7 +78,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Frontend
-          dockerfile: Dockerfile
+          file: Dockerfile
           target: final
           platforms: linux/arm64,linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
