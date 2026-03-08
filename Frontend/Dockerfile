@@ -3,13 +3,13 @@ FROM --platform=linux/arm64 node:20-alpine AS build
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY Frontend/package*.json ./
 
 # Install dependencies
 RUN npm ci
 
 # Copy source code
-COPY . .
+COPY Frontend/. ./
 
 # Build the React app
 RUN npm run build

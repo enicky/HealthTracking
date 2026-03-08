@@ -3,12 +3,12 @@ FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
 # Copy solution file and all project files
-COPY ["HealthPlatform.sln", "./"]
-COPY ["src/HealthPlatform.Domain/", "src/HealthPlatform.Domain/"]
-COPY ["src/HealthPlatform.Application/", "src/HealthPlatform.Application/"]
-COPY ["src/HealthPlatform.Infrastructure/", "src/HealthPlatform.Infrastructure/"]
-COPY ["src/HealthPlatform.Api/", "src/HealthPlatform.Api/"]
-COPY ["tests/HealthPlatform.Tests/", "tests/HealthPlatform.Tests/"]
+COPY ["Backend/HealthPlatform.sln", "./"]
+COPY ["Backend/src/HealthPlatform.Domain/", "src/HealthPlatform.Domain/"]
+COPY ["Backend/src/HealthPlatform.Application/", "src/HealthPlatform.Application/"]
+COPY ["Backend/src/HealthPlatform.Infrastructure/", "src/HealthPlatform.Infrastructure/"]
+COPY ["Backend/src/HealthPlatform.Api/", "src/HealthPlatform.Api/"]
+COPY ["Backend/tests/HealthPlatform.Tests/", "tests/HealthPlatform.Tests/"]
 
 # Restore all dependencies
 RUN dotnet restore "HealthPlatform.sln"
