@@ -1,0 +1,82 @@
+/* ECG Detail Styling */
+
+.ecg-detail {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Flot Chart Container */
+.flot-chart-container {
+  background: #fff;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.flot-chart {
+  display: block;
+  width: 100%;
+  min-height: 400px;
+  background: #fff;
+}
+
+/* Chart responsive */
+@media (max-width: 768px) {
+  .flot-chart {
+    min-height: 300px;
+  }
+}
+
+/* Card spacing */
+.ecg-detail .card {
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.ecg-detail .card-header {
+  border-bottom: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.ecg-detail .card-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Back button */
+.ecg-detail .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.ecg-detail .btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* Badge styling */
+.ecg-detail .badge {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+/* Info sections */
+.ecg-detail .col-md-3,
+.ecg-detail .col-md-4 {
+  margin-bottom: 20px;
+}
+
+.ecg-detail b {
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}

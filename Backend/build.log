@@ -1,0 +1,173 @@
+time="2026-03-04T07:06:39+01:00" level=warning msg="/Users/nicholase/projects/HealtTracking/Backend/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ postgres Pulling 
+ d8ad8cd72600 Already exists 
+ 3d8f3437ce1b Pulling fs layer 
+ 79adb56125dd Pulling fs layer 
+ 79adb56125dd Download complete 
+ 916f1ad40c12 Pulling fs layer 
+ 7419a9c52e02 Pulling fs layer 
+ 7419a9c52e02 Download complete 
+ 58563aacf9ee Pulling fs layer 
+ 58563aacf9ee Download complete 
+ 3d85c14803ff Pulling fs layer 
+ 3d85c14803ff Download complete 
+ 3d8f3437ce1b Downloading  1.966MB/103.1MB
+ 49b582240ca8 Pulling fs layer 
+ 49b582240ca8 Download complete 
+ 08bb20b6ce3e Pulling fs layer 
+ 08bb20b6ce3e Download complete 
+ 4328d592a54b Pulling fs layer 
+ 4328d592a54b Download complete 
+ 916f1ad40c12 Downloading  524.3kB/876.5kB
+ b06d9135182e Pulling fs layer 
+ b06d9135182e Download complete 
+ 916f1ad40c12 Download complete 
+ 3d8f3437ce1b Downloading  6.996MB/103.1MB
+ 3d8f3437ce1b Downloading  12.08MB/103.1MB
+ 3d8f3437ce1b Downloading  18.63MB/103.1MB
+ 3d8f3437ce1b Downloading   23.9MB/103.1MB
+ 3d8f3437ce1b Downloading  30.05MB/103.1MB
+ 3d8f3437ce1b Downloading   35.6MB/103.1MB
+ 3d8f3437ce1b Downloading  39.53MB/103.1MB
+ 3d8f3437ce1b Downloading [=====================>                             ]   44.3MB/103.1MB
+ 3d8f3437ce1b Downloading [========================>                          ]  49.79MB/103.1MB
+ 3d8f3437ce1b Downloading [===========================>                       ]  56.14MB/103.1MB
+ 3d8f3437ce1b Downloading [=============================>                     ]  60.56MB/103.1MB
+ 3d8f3437ce1b Downloading [================================>                  ]  66.37MB/103.1MB
+ 3d8f3437ce1b Downloading [==================================>                ]  70.56MB/103.1MB
+ 3d8f3437ce1b Downloading [====================================>              ]  74.84MB/103.1MB
+ 3d8f3437ce1b Downloading [======================================>            ]  79.51MB/103.1MB
+ 3d8f3437ce1b Downloading [========================================>          ]  83.92MB/103.1MB
+ 3d8f3437ce1b Downloading [==========================================>        ]  88.08MB/103.1MB
+ 3d8f3437ce1b Downloading [============================================>      ]  92.44MB/103.1MB
+ 3d8f3437ce1b Downloading [==============================================>    ]  96.21MB/103.1MB
+ 3d8f3437ce1b Downloading [================================================>  ]  100.9MB/103.1MB
+ 3d8f3437ce1b Download complete 
+ 0f7a666480d0 Pulling fs layer 
+ 0f7a666480d0 Download complete 
+ 0f7a666480d0 Download complete 
+ postgres Pulled 
+time="2026-03-04T07:07:04+01:00" level=warning msg="Docker Compose is configured to build using Bake, but buildx isn't installed"
+#0 building with "default" instance using docker-container driver
+
+#1 [api internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.12kB done
+#1 DONE 0.0s
+
+#2 [api internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0
+#2 DONE 0.1s
+
+#3 [api internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0
+#3 DONE 0.2s
+
+#4 [api internal] load .dockerignore
+#4 transferring context: 118B done
+#4 DONE 0.0s
+
+#5 [api base 1/2] FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:aec87aa74ddf129da573fa69f42f229a23c953a1c6fdecedea1aa6b1fe147d76
+#5 resolve mcr.microsoft.com/dotnet/aspnet:10.0@sha256:aec87aa74ddf129da573fa69f42f229a23c953a1c6fdecedea1aa6b1fe147d76 done
+#5 DONE 0.0s
+
+#6 [api build  1/10] FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e362a8dbcd691522456da26a5198b8f3ca1d7641c95624fadc5e3e82678bd08a
+#6 resolve mcr.microsoft.com/dotnet/sdk:10.0@sha256:e362a8dbcd691522456da26a5198b8f3ca1d7641c95624fadc5e3e82678bd08a done
+#6 DONE 0.0s
+
+#7 [api build  2/10] WORKDIR /src
+#7 CACHED
+
+#8 [api internal] load build context
+#8 transferring context: 38.14kB 0.0s done
+#8 DONE 0.0s
+
+#9 [api build  3/10] COPY [src/HealthPlatform.Domain/HealthPlatform.Domain.csproj, src/HealthPlatform.Domain/]
+#9 DONE 0.2s
+
+#10 [api build  4/10] COPY [src/HealthPlatform.Application/HealthPlatform.Application.csproj, src/HealthPlatform.Application/]
+#10 DONE 0.0s
+
+#11 [api build  5/10] COPY [src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj, src/HealthPlatform.Infrastructure/]
+#11 DONE 0.0s
+
+#12 [api build  6/10] COPY [src/HealthPlatform.Api/HealthPlatform.Api.csproj, src/HealthPlatform.Api/]
+#12 DONE 0.0s
+
+#13 [api build  7/10] RUN dotnet restore "src/HealthPlatform.Api/HealthPlatform.Api.csproj"
+#13 0.367   Determining projects to restore...
+#13 0.800   Restored /src/src/HealthPlatform.Domain/HealthPlatform.Domain.csproj (in 36 ms).
+#13 3.386   Restored /src/src/HealthPlatform.Application/HealthPlatform.Application.csproj (in 2.64 sec).
+#13 5.630 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#13 5.630 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#13 5.667   Restored /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj (in 4.89 sec).
+#13 12.33 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1603: HealthPlatform.Api depends on Swashbuckle.AspNetCore (>= 6.4.6) but Swashbuckle.AspNetCore 6.4.6 was not found. Swashbuckle.AspNetCore 6.5.0 was resolved instead.
+#13 12.33 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#13 12.35   Restored /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj (in 11.6 sec).
+#13 DONE 12.5s
+
+#14 [api build  8/10] COPY [src/, src/]
+#14 DONE 0.0s
+
+#15 [api build  9/10] WORKDIR /src/src/HealthPlatform.Api
+#15 DONE 0.0s
+
+#16 [api build 10/10] RUN dotnet build "HealthPlatform.Api.csproj" -c Release -o /app/build
+#16 0.336   Determining projects to restore...
+#16 0.749 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1603: HealthPlatform.Api depends on Swashbuckle.AspNetCore (>= 6.4.6) but Swashbuckle.AspNetCore 6.4.6 was not found. Swashbuckle.AspNetCore 6.5.0 was resolved instead.
+#16 0.749 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#16 0.749 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#16 0.749 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 0.750   All projects are up-to-date for restore.
+#16 0.847 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1603: HealthPlatform.Api depends on Swashbuckle.AspNetCore (>= 6.4.6) but Swashbuckle.AspNetCore 6.4.6 was not found. Swashbuckle.AspNetCore 6.5.0 was resolved instead.
+#16 0.847 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 0.945 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj
+#16 0.945 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 2.076   HealthPlatform.Domain -> /app/build/HealthPlatform.Domain.dll
+#16 2.182 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(3,22): error CS0234: The type or namespace name 'Infrastructure' does not exist in the namespace 'HealthPlatform' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(4,17): error CS0234: The type or namespace name 'EntityFrameworkCore' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/EcgService.cs(3,22): error CS0234: The type or namespace name 'Infrastructure' does not exist in the namespace 'HealthPlatform' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/EcgService.cs(4,17): error CS0234: The type or namespace name 'EntityFrameworkCore' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/EcgService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/TenantService.cs(7,22): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/TenantService.cs(9,26): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/EcgService.cs(13,23): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.182 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(13,33): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.196 
+#16 2.196 Build FAILED.
+#16 2.196 
+#16 2.197 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1603: HealthPlatform.Api depends on Swashbuckle.AspNetCore (>= 6.4.6) but Swashbuckle.AspNetCore 6.4.6 was not found. Swashbuckle.AspNetCore 6.5.0 was resolved instead.
+#16 2.197 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#16 2.197 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c [/src/src/HealthPlatform.Api/HealthPlatform.Api.csproj]
+#16 2.197 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 2.197 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1603: HealthPlatform.Api depends on Swashbuckle.AspNetCore (>= 6.4.6) but Swashbuckle.AspNetCore 6.4.6 was not found. Swashbuckle.AspNetCore 6.5.0 was resolved instead.
+#16 2.197 /src/src/HealthPlatform.Api/HealthPlatform.Api.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 2.197 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj
+#16 2.197 /src/src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj : warning NU1903: Package 'Npgsql' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c
+#16 2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(3,22): error CS0234: The type or namespace name 'Infrastructure' does not exist in the namespace 'HealthPlatform' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(4,17): error CS0234: The type or namespace name 'EntityFrameworkCore' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(3,22): error CS0234: The type or namespace name 'Infrastructure' does not exist in the namespace 'HealthPlatform' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(4,17): error CS0234: The type or namespace name 'EntityFrameworkCore' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/TenantService.cs(7,22): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/TenantService.cs(9,26): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(13,23): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(13,33): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+#16 2.197     8 Warning(s)
+#16 2.197     10 Error(s)
+#16 2.197 
+#16 2.197 Time Elapsed 00:00:02.05
+#16 ERROR: process "/bin/sh -c dotnet build \"HealthPlatform.Api.csproj\" -c Release -o /app/build" did not complete successfully: exit code: 1
+------
+ > [api build 10/10] RUN dotnet build "HealthPlatform.Api.csproj" -c Release -o /app/build:
+2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197 /src/src/HealthPlatform.Application/Services/TenantService.cs(7,22): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(10,22): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197 /src/src/HealthPlatform.Application/Services/TenantService.cs(9,26): error CS0246: The type or namespace name 'IHttpContextAccessor' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197 /src/src/HealthPlatform.Application/Services/EcgService.cs(13,23): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197 /src/src/HealthPlatform.Application/Services/BloodPressureService.cs(13,33): error CS0246: The type or namespace name 'HealthDbContext' could not be found (are you missing a using directive or an assembly reference?) [/src/src/HealthPlatform.Application/HealthPlatform.Application.csproj]
+2.197     8 Warning(s)
+2.197     10 Error(s)
+2.197 
+2.197 Time Elapsed 00:00:02.05
+------
+failed to solve: process "/bin/sh -c dotnet build \"HealthPlatform.Api.csproj\" -c Release -o /app/build" did not complete successfully: exit code: 1

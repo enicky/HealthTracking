@@ -1,0 +1,148 @@
+.dashboard-container {
+  padding: 15px 0;
+}
+
+.info-box {
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  margin-bottom: 20px;
+  padding: 10px;
+  display: flex;
+  align-items: stretch;
+  min-height: 90px;
+  color: #212529;
+}
+
+.info-box-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  font-size: 24px;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.info-box-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.info-box-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 5px;
+}
+
+.info-box-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.info-box-number small {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.bg-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+  color: #fff;
+}
+
+.bg-info .info-box-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  color: #fff;
+}
+
+.bg-success .info-box-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+  color: #fff;
+}
+
+.bg-warning .info-box-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bg-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  color: #fff;
+}
+
+.bg-danger .info-box-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-striped tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.badge {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 0.25rem;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+}
+
+@media (max-width: 768px) {
+  .info-box {
+    min-height: 70px;
+  }
+
+  .info-box-icon {
+    width: 70px;
+    font-size: 20px;
+  }
+
+  .info-box-number {
+    font-size: 18px;
+  }
+
+  .chart-container canvas {
+    width: 100%;
+    height: auto;
+  }
+}

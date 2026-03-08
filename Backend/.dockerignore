@@ -1,0 +1,10 @@
+.dockerignore
+bin/
+obj/
+.git/
+.gitignore
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store

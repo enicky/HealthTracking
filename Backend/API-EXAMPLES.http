@@ -1,0 +1,65 @@
+@baseUrl = http://localhost:5000/api
+@tenantId = 550e8400-e29b-41d4-a716-446655440000
+@userId = 550e8400-e29b-41d4-a716-446655440001
+
+### Health Check
+GET {{baseUrl}}/healthcheck
+
+### Get ECG Sessions
+GET {{baseUrl}}/ecg?skip=0&take=50
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+
+### Create ECG Session
+POST {{baseUrl}}/ecg
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+Content-Type: application/json
+
+{
+  "recordedAt": "2024-03-04T10:30:00Z",
+  "classification": "Normal",
+  "averageHeartRate": 72,
+  "samples": [
+    {"time": 0, "ms": 0, "value": 0.5},
+    {"time": 1, "ms": 40, "value": 0.6},
+    {"time": 2, "ms": 80, "value": 0.55},
+    {"time": 3, "ms": 120, "value": 0.65}
+  ]
+}
+
+### Get Specific ECG Session
+GET {{baseUrl}}/ecg/550e8400-e29b-41d4-a716-446655440002
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+
+### Get Blood Pressure Readings
+GET {{baseUrl}}/bloodpressure?skip=0&take=50
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+
+### Create Blood Pressure Reading
+POST {{baseUrl}}/bloodpressure
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+Content-Type: application/json
+
+{
+  "recordedAt": "2024-03-04T14:20:00Z",
+  "systolic": 120,
+  "diastolic": 80,
+  "pulse": 72
+}
+
+### Get Specific Blood Pressure Reading
+GET {{baseUrl}}/bloodpressure/550e8400-e29b-41d4-a716-446655440003
+X-Tenant-Id: {{tenantId}}
+X-User-Id: {{userId}}
+
+### Test with Invalid Headers (should fail)
+GET {{baseUrl}}/ecg
+X-Tenant-Id: invalid-uuid
+X-User-Id: {{userId}}
+
+### Test with Missing Headers (should fail)
+GET {{baseUrl}}/ecg

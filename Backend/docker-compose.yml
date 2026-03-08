@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    platform: linux/arm64
+    container_name: health-tracking-postgres
+    environment:
+      POSTGRES_DB: healthtracking
+      POSTGRES_USER: healthtracking
+      POSTGRES_PASSWORD: healthtracking123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthtracking"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - health-tracking-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILDPLATFORM: linux/arm64
+    platform: linux/arm64
+    container_name: health-tracking-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=healthtracking;Username=healthtracking;Password=healthtracking123"
+    ports:
+      - "5001:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - health-tracking-network
+
+  frontend:
+    build:
+      context: ../Frontend
+      dockerfile: Dockerfile
+      args:
+        BUILDPLATFORM: linux/arm64
+    platform: linux/arm64
+    container_name: health-tracking-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: "http://localhost/api"
+    depends_on:
+      - api
+    networks:
+      - health-tracking-network
+
+  nginx:
+    image: nginx:alpine
+    platform: linux/arm64
+    container_name: health-tracking-nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - health-tracking-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  health-tracking-network:
+    driver: bridge
