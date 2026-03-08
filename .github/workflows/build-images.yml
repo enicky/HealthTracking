@@ -14,8 +14,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE_NAME: ${{ github.repository }}/health-api
-  FRONTEND_IMAGE_NAME: ${{ github.repository }}/health-frontend
 
 jobs:
   build-and-push:
@@ -43,7 +41,7 @@ jobs:
         id: meta-backend
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/health-api
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -55,7 +53,7 @@ jobs:
         id: meta-frontend
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/health-frontend
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
