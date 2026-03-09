@@ -33,6 +33,19 @@ spec:
           value: Production
         - name: ConnectionStrings__DefaultConnection
           value: "Host=postgres;Port=5432;Database=healthtracking;Username=healthtracking;Password=healthtracking123"
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "healthtracking"
+        - name: DB_USER
+          value: "healthtracking"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
         ports:
         - containerPort: 8080
           name: http
