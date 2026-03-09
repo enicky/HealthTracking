@@ -50,9 +50,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Tenant resolution middleware
+// Tenant resolution middleware - skip for health probe endpoints
 app.Use(async (context, next) =>
 {
+    // Skip tenant validation for health probes and swagger
+    if (context.Request.Path.StartsWithSegments("/health") ||
+        context.Request.Path.StartsWithSegments("/swagger") ||
+        context.Request.Path == "/")
+    {
+        await next();
+        return;
+    }
+
     var tenantId = context.Request.Headers["X-Tenant-Id"].FirstOrDefault();
     var userId = context.Request.Headers["X-User-Id"].FirstOrDefault();
 
