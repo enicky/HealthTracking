@@ -45,12 +45,18 @@ public class EcgController : ControllerBase
     {
         try
         {
+            var userId = HttpContext.Items["UserId"];
+            var tenantId = HttpContext.Items["TenantId"];
+            _logger.LogInformation("[ECG] GetSessions called - UserId: {UserId}, TenantId: {TenantId}, Skip: {Skip}, Take: {Take}", userId, tenantId, skip, take);
+            
             var sessions = await _ecgService.GetEcgSessionsAsync(skip, take);
+            _logger.LogInformation("[ECG] Retrieved {SessionCount} ECG sessions for UserId: {UserId}", sessions.Count, userId);
+            
             return Ok(sessions);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving ECG sessions");
+            _logger.LogError(ex, "[ECG] Error retrieving ECG sessions for UserId: {UserId}", HttpContext.Items["UserId"]);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -61,15 +67,22 @@ public class EcgController : ControllerBase
     {
         try
         {
+            var userId = HttpContext.Items["UserId"];
+            _logger.LogInformation("[ECG] GetSession called - SessionId: {SessionId}, UserId: {UserId}", id, userId);
+            
             var session = await _ecgService.GetEcgSessionByIdAsync(id);
             if (session == null)
+            {
+                _logger.LogWarning("[ECG] Session not found - SessionId: {SessionId}, UserId: {UserId}", id, userId);
                 return NotFound();
+            }
 
+            _logger.LogInformation("[ECG] Successfully retrieved session - SessionId: {SessionId}, UserId: {UserId}", id, userId);
             return Ok(session);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving ECG session {SessionId}", id);
+            _logger.LogError(ex, "[ECG] Error retrieving ECG session {SessionId} for UserId: {UserId}", id, HttpContext.Items["UserId"]);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }

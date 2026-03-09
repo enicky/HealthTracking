@@ -40,8 +40,6 @@ public class HealthController : ControllerBase
     [HttpGet("ready")]
     public async Task<IActionResult> Ready()
     {
-        _logger.LogInformation("Readiness probe check");
-
         try
         {
             // Check if database is accessible
