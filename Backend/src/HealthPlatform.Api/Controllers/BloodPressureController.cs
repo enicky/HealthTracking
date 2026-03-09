@@ -23,7 +23,7 @@ public class BloodPressureController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Creating blood pressure reading for user {UserId}", HttpContext.Items["UserId"]);
+            _logger.LogInformation("Creating blood pressure reading");
             var result = await _service.CreateReadingAsync(dto);
             return CreatedAtAction(nameof(GetReading), new { id = result.Id }, result);
         }
@@ -70,6 +70,58 @@ public class BloodPressureController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving blood pressure reading {ReadingId}", id);
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
+
+    [HttpPost("bulk")]
+    public async Task<IActionResult> Bulk([FromBody] List<CreateBloodPressureReadingDto> records)
+    {
+        try
+        {
+            if (records == null || records.Count == 0)
+            {
+                return BadRequest(new { error = "No records provided" });
+            }
+
+            _logger.LogInformation("Processing bulk request with {Count} blood pressure records", records.Count);
+
+            var createdReadings = new List<BloodPressureReadingDto>();
+            var failedRecords = new List<object>();
+
+            for (int i = 0; i < records.Count; i++)
+            {
+                try
+                {
+                    var result = await _service.CreateReadingAsync(records[i]);
+                    createdReadings.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to create blood pressure reading at index {Index}", i);
+                    failedRecords.Add(new
+                    {
+                        index = i,
+                        record = records[i],
+                        error = ex.Message
+                    });
+                }
+            }
+
+            _logger.LogInformation("Bulk operation completed: {SuccessCount} created, {FailureCount} failed", 
+                createdReadings.Count, failedRecords.Count);
+
+            return Ok(new
+            {
+                successCount = createdReadings.Count,
+                failureCount = failedRecords.Count,
+                createdReadings = createdReadings,
+                failedRecords = failedRecords.Count > 0 ? failedRecords : null
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing bulk blood pressure records");
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
