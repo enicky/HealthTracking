@@ -2,6 +2,10 @@
 FROM --platform=linux/arm64 node:20-slim AS build
 WORKDIR /app
 
+# Accept build-time API URL
+ARG VITE_API_URL=http://localhost:5001
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files
 COPY Frontend/package*.json ./
 
@@ -11,7 +15,7 @@ RUN npm install --verbose
 # Copy source code
 COPY Frontend/. ./
 
-# Build the React app
+# Build the React app with environment variables
 RUN npm run build
 
 # Runtime stage - ARM64 compatible
