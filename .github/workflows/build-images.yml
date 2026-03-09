@@ -141,8 +141,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs: build-and-push
+    permissions:
+      security-events: write
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -151,7 +156,7 @@ jobs:
           output: 'trivy-results.json'
 
       - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-results.json'
