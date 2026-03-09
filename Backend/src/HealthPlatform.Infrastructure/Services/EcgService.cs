@@ -2,6 +2,7 @@ using HealthPlatform.Application.Interfaces;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HealthPlatform.Infrastructure.Services;
 
@@ -9,11 +10,13 @@ public class EcgService : IEcgService
 {
     private readonly HealthDbContext _context;
     private readonly ITenantService _tenantService;
+    private readonly ILogger<EcgService> _logger;
 
-    public EcgService(HealthDbContext context, ITenantService tenantService)
+    public EcgService(HealthDbContext context, ITenantService tenantService, ILogger<EcgService> logger)
     {
         _context = context;
         _tenantService = tenantService;
+        _logger = logger;
     }
 
     public async Task<EcgSessionDto> CreateEcgSessionAsync(CreateEcgSessionDto dto)
@@ -21,12 +24,33 @@ public class EcgService : IEcgService
         var tenantId = _tenantService.GetCurrentTenantId();
         var userId = _tenantService.GetCurrentUserId();
 
+        _logger.LogInformation("CreateEcgSessionAsync called - TenantId: {TenantId}, UserId: {UserId}, RecordedAt: {RecordedAt}", 
+            tenantId, userId, dto.RecordedAt);
+
         // Verify user exists and belongs to tenant
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Id == userId && u.TenantId == tenantId && u.DeletedAt == null);
         
         if (user == null)
             throw new UnauthorizedAccessException("User not found or does not belong to tenant");
+
+        // Check if a session with the same recordedAt already exists for this user
+        _logger.LogInformation("Checking for existing ECG session with RecordedAt: {RecordedAt}, TenantId: {TenantId}, UserId: {UserId}", 
+            dto.RecordedAt, tenantId, userId);
+
+        var existingSession = await _context.EcgSessions
+            .FirstOrDefaultAsync(e => e.TenantId == tenantId && e.UserId == userId && 
+                                       e.RecordedAt == dto.RecordedAt && e.DeletedAt == null);
+
+        if (existingSession != null)
+        {
+            _logger.LogWarning("Duplicate ECG session detected for RecordedAt: {RecordedAt}, SessionId: {SessionId}. Returning existing session.", 
+                dto.RecordedAt, existingSession.Id);
+            // Return existing session instead of creating duplicate
+            return MapToDto(existingSession);
+        }
+
+        _logger.LogInformation("No existing session found. Creating new ECG session for RecordedAt: {RecordedAt}", dto.RecordedAt);
 
         var session = new EcgSession
         {
@@ -43,6 +67,9 @@ public class EcgService : IEcgService
         _context.EcgSessions.Add(session);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Successfully created new ECG session with Id: {SessionId}, RecordedAt: {RecordedAt}", 
+            session.Id, session.RecordedAt);
+
         return MapToDto(session);
     }
 
@@ -51,12 +78,17 @@ public class EcgService : IEcgService
         var tenantId = _tenantService.GetCurrentTenantId();
         var userId = _tenantService.GetCurrentUserId();
 
+        _logger.LogInformation("GetEcgSessionsAsync called - TenantId: {TenantId}, UserId: {UserId}, Skip: {Skip}, Take: {Take}", 
+            tenantId, userId, skip, take);
+
         var sessions = await _context.EcgSessions
             .Where(e => e.TenantId == tenantId && e.UserId == userId && e.DeletedAt == null)
             .OrderByDescending(e => e.RecordedAt)
             .Skip(skip)
             .Take(take)
             .ToListAsync();
+
+        _logger.LogInformation("Retrieved {SessionCount} ECG sessions from database", sessions.Count);
 
         return sessions.Select(MapToDto);
     }
