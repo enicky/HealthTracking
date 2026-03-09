@@ -1,12 +1,12 @@
 # Build stage - ARM64 compatible
-FROM --platform=linux/arm64 node:20-alpine AS build
+FROM --platform=linux/arm64 node:20-slim AS build
 WORKDIR /app
 
 # Copy package files
 COPY Frontend/package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with npm verbose output to show progress
+RUN npm install --verbose
 
 # Copy source code
 COPY Frontend/. ./
