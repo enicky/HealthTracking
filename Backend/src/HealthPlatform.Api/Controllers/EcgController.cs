@@ -47,16 +47,16 @@ public class EcgController : ControllerBase
         {
             var userId = HttpContext.Items["UserId"];
             var tenantId = HttpContext.Items["TenantId"];
-            _logger.LogInformation("[ECG] GetSessions called - UserId: {UserId}, TenantId: {TenantId}, Skip: {Skip}, Take: {Take}", userId, tenantId, skip, take);
+            _logger.LogInformation("[ECG] GetSessions called - UserId: {UserId}, TenantId: {TenantId}, Skip: {Skip}, Take: {Take}", userId?.ToString() ?? "unknown", tenantId?.ToString() ?? "unknown", skip, take);
             
             var sessions = await _ecgService.GetEcgSessionsAsync(skip, take);
-            _logger.LogInformation("[ECG] Retrieved {SessionCount} ECG sessions for UserId: {UserId}", sessions.Count, userId);
+            _logger.LogInformation("[ECG] Retrieved {SessionCount} ECG sessions for UserId: {UserId}", sessions.Count, userId?.ToString() ?? "unknown");
             
             return Ok(sessions);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ECG] Error retrieving ECG sessions for UserId: {UserId}", HttpContext.Items["UserId"]);
+            _logger.LogError(ex, "[ECG] Error retrieving ECG sessions for UserId: {UserId}", HttpContext.Items["UserId"]?.ToString() ?? "unknown");
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -68,21 +68,21 @@ public class EcgController : ControllerBase
         try
         {
             var userId = HttpContext.Items["UserId"];
-            _logger.LogInformation("[ECG] GetSession called - SessionId: {SessionId}, UserId: {UserId}", id, userId);
+            _logger.LogInformation("[ECG] GetSession called - SessionId: {SessionId}, UserId: {UserId}", id, userId?.ToString() ?? "unknown");
             
             var session = await _ecgService.GetEcgSessionByIdAsync(id);
             if (session == null)
             {
-                _logger.LogWarning("[ECG] Session not found - SessionId: {SessionId}, UserId: {UserId}", id, userId);
+                _logger.LogWarning("[ECG] Session not found - SessionId: {SessionId}, UserId: {UserId}", id, userId?.ToString() ?? "unknown");
                 return NotFound();
             }
 
-            _logger.LogInformation("[ECG] Successfully retrieved session - SessionId: {SessionId}, UserId: {UserId}", id, userId);
+            _logger.LogInformation("[ECG] Successfully retrieved session - SessionId: {SessionId}, UserId: {UserId}", id, userId?.ToString() ?? "unknown");
             return Ok(session);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ECG] Error retrieving ECG session {SessionId} for UserId: {UserId}", id, HttpContext.Items["UserId"]);
+            _logger.LogError(ex, "[ECG] Error retrieving ECG session {SessionId} for UserId: {UserId}", id, HttpContext.Items["UserId"]?.ToString() ?? "unknown");
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
