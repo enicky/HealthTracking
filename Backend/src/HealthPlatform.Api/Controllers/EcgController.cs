@@ -78,6 +78,29 @@ public class EcgController : ControllerBase
         }
     }
 
+    /// <summary>Deletes an ECG session by ID</summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSession(Guid id)
+    {
+        try
+        {
+            var deleted = await _ecgService.DeleteEcgSessionAsync(id);
+            if (!deleted)
+            {
+                _logger.LogWarning($"Session not found for deletion: {id}");
+                return NotFound();
+            }
+
+            _logger.LogInformation($"Deleted session: {id}");
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error deleting session: {id}");
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
+
     /// <summary>Creates multiple ECG sessions in bulk</summary>
     [HttpPost("bulk")]
     public async Task<IActionResult> Bulk([FromBody] List<CreateEcgSessionDto> records)

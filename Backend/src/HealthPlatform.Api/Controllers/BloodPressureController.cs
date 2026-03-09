@@ -74,6 +74,28 @@ public class BloodPressureController : ControllerBase
         }
     }
 
+    /// <summary>Deletes a blood pressure reading by ID</summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteReading(Guid id)
+    {
+        try
+        {
+            await _service.DeleteReadingAsync(id);
+            _logger.LogInformation($"Deleted reading: {id}");
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            _logger.LogWarning($"Reading not found for deletion: {id}");
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error deleting reading: {id}");
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
+
     [HttpPost("bulk")]
     public async Task<IActionResult> Bulk([FromBody] List<CreateBloodPressureReadingDto> records)
     {
