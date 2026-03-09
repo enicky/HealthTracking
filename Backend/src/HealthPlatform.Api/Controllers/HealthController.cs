@@ -80,44 +80,4 @@ public class HealthController : ControllerBase
             });
         }
     }
-
-    /// <summary>
-    /// Combined health endpoint that provides comprehensive health information
-    /// </summary>
-    [HttpGet]
-    public async Task<IActionResult> GetHealth()
-    {
-        _logger.LogInformation("Health check requested");
-
-        try
-        {
-            var canConnect = await _dbContext.Database.CanConnectAsync();
-
-            var healthStatus = new
-            {
-                status = canConnect ? "healthy" : "unhealthy",
-                timestamp = DateTime.UtcNow,
-                service = "health-platform-api",
-                version = "1.0.0",
-                checks = new
-                {
-                    database = canConnect ? "connected" : "disconnected"
-                }
-            };
-
-            var statusCode = canConnect ? StatusCodes.Status200OK : StatusCodes.Status503ServiceUnavailable;
-            return StatusCode(statusCode, healthStatus);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during health check");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-            {
-                status = "unhealthy",
-                timestamp = DateTime.UtcNow,
-                service = "health-platform-api",
-                error = ex.Message
-            });
-        }
-    }
 }

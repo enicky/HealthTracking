@@ -73,28 +73,4 @@ public class BloodPressureController : ControllerBase
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
-
-    /// <summary>Deletes a blood pressure reading</summary>
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteReading(Guid id)
-    {
-        try
-        {
-            var userId = HttpContext.Items["UserId"]?.ToString();
-            _logger.LogInformation("Deleting blood pressure reading {ReadingId} for user {UserId}", id, userId);
-            
-            await _service.DeleteReadingAsync(id);
-            return Ok(new { success = true, message = "Blood pressure reading deleted successfully" });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning("Unauthorized access: {Message}", ex.Message);
-            return BadRequest(new { error = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting blood pressure reading {ReadingId}", id);
-            return StatusCode(500, new { error = "Internal server error" });
-        }
-    }
 }
