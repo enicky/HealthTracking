@@ -1,5 +1,5 @@
-# Build stage - ARM64 compatible
-FROM --platform=linux/arm64 node:20-slim AS build
+# Build stage
+FROM node:20-slim AS build
 WORKDIR /app
 
 # Accept build-time API URL
@@ -18,8 +18,8 @@ COPY Frontend/. ./
 # Build the React app with environment variables
 RUN npm run build
 
-# Runtime stage - ARM64 compatible
-FROM --platform=linux/arm64 node:20-alpine
+# Runtime stage
+FROM node:20-alpine
 WORKDIR /app
 
 # Install serve to run static files

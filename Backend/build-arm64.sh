@@ -25,7 +25,7 @@ if command -v docker buildx &> /dev/null; then
         --platform linux/arm64 \
         -t "$REGISTRY/$BACKEND_IMAGE" \
         -f ./Dockerfile \
-        --load \
+        --output type=docker \
         .
     
     # Build frontend
@@ -35,7 +35,7 @@ if command -v docker buildx &> /dev/null; then
         --platform linux/arm64 \
         -t "$REGISTRY/$FRONTEND_IMAGE" \
         -f ../Frontend/Dockerfile \
-        --load \
+        --output type=docker \
         ../Frontend
 else
     echo "⚠ Docker buildx not found - using standard docker build"
