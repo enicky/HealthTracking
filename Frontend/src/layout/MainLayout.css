@@ -1,1 +1,37 @@
-/* No custom styles - using AdminLTE default layout */
+/* Improve content header readability */
+.content-header h1 {
+  color: #212529;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.content-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem;
+}
+
+/* Improve main content area */
+.content-wrapper {
+  background-color: #ffffff;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+/* Improve sidebar collapse transition */
+.wrapper.sidebar-collapse .main-sidebar {
+  margin-left: -250px;
+}
+
+/* Footer styling */
+.main-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  color: #6c757d;
+  padding: 1rem;
+  font-size: 0.875rem;
+}

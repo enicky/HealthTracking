@@ -4,13 +4,10 @@ import { useTenant } from '../../hooks/useTenant'
 import './EcgList.css'
 
 const PAGINATION_STORAGE_KEY = 'ecg_sessions_page'
-const FILTER_CLASSIFICATION_KEY = 'ecg_filter_classification'
-const FILTER_DATE_KEY = 'ecg_filter_date'
 
 export default function EcgList({ onSelectSession }) {
   const { tenantId, userId } = useTenant()
   const [sessions, setSessions] = useState([])
-  const [allSessions, setAllSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [skip, setSkip] = useState(() => {
@@ -19,44 +16,37 @@ export default function EcgList({ onSelectSession }) {
     return saved ? parseInt(saved, 10) : 0
   })
   const [take] = useState(10)
+  const [hasMore, setHasMore] = useState(false)
   const [deleting, setDeleting] = useState(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState(null)
-  const [selectedClassification, setSelectedClassification] = useState(() => {
-    const saved = localStorage.getItem(FILTER_CLASSIFICATION_KEY)
-    return saved || ''
-  })
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const saved = localStorage.getItem(FILTER_DATE_KEY)
-    return saved || ''
-  })
 
   useEffect(() => {
-    fetchSessions()
-  }, [skip])
+    if (tenantId && userId) {
+      fetchSessions()
+    }
+  }, [skip, tenantId, userId])
 
   useEffect(() => {
     // Save current page to localStorage
     localStorage.setItem(PAGINATION_STORAGE_KEY, skip.toString())
   }, [skip])
 
-  useEffect(() => {
-    // Save filter selections to localStorage
-    localStorage.setItem(FILTER_CLASSIFICATION_KEY, selectedClassification)
-  }, [selectedClassification])
-
-  useEffect(() => {
-    // Save filter selections to localStorage
-    localStorage.setItem(FILTER_DATE_KEY, selectedDate)
-  }, [selectedDate])
-
   async function fetchSessions() {
     try {
       setLoading(true)
       setError(null)
-      const data = await apiService.getEcgSessions(tenantId, userId, 0, 1000)
-      setAllSessions(data)
-      applyFilters(data)
+      // Fetch one extra record to determine if there are more pages
+      const data = await apiService.getEcgSessions(tenantId, userId, skip, take + 1)
+      
+      if (data.length > take) {
+        // More records exist, trim to page size
+        setSessions(data.slice(0, take))
+        setHasMore(true)
+      } else {
+        setSessions(data)
+        setHasMore(false)
+      }
     } catch (err) {
       setError(err.message)
       console.error('Failed to fetch ECG sessions:', err)
@@ -64,31 +54,6 @@ export default function EcgList({ onSelectSession }) {
       setLoading(false)
     }
   }
-
-  function applyFilters(data) {
-    let filtered = data
-
-    // Filter by classification
-    if (selectedClassification) {
-      filtered = filtered.filter(s => s.classification === selectedClassification)
-    }
-
-    // Filter by date
-    if (selectedDate) {
-      const selectedDateObj = new Date(selectedDate)
-      filtered = filtered.filter(s => {
-        const sessionDate = new Date(s.recordedAt)
-        return sessionDate.toLocaleDateString() === selectedDateObj.toLocaleDateString()
-      })
-    }
-
-    // Apply pagination
-    setSessions(filtered.slice(skip, skip + take))
-  }
-
-  useEffect(() => {
-    applyFilters(allSessions)
-  }, [selectedClassification, selectedDate, skip])
 
   const handleSelectSession = (sessionId) => {
     if (onSelectSession) {
@@ -147,61 +112,6 @@ export default function EcgList({ onSelectSession }) {
             </div>
           </div>
 
-          {/* Filter Panel */}
-          <div className="card-body bg-light border-bottom">
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label font-weight-bold">
-                  <i className="fas fa-filter mr-2"></i>Filter by Classification
-                </label>
-                <select
-                  className="form-control form-control-sm"
-                  value={selectedClassification}
-                  onChange={(e) => {
-                    setSelectedClassification(e.target.value)
-                    setSkip(0)
-                  }}
-                >
-                  <option value="">All Classifications</option>
-                  {[...new Set(allSessions.map(s => s.classification).filter(Boolean))].sort().map(classification => (
-                    <option key={classification} value={classification}>
-                      {classification}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-6">
-                <label className="form-label font-weight-bold">
-                  <i className="fas fa-calendar mr-2"></i>Filter by Date
-                </label>
-                <div className="input-group input-group-sm">
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={selectedDate}
-                    onChange={(e) => {
-                      setSelectedDate(e.target.value)
-                      setSkip(0)
-                    }}
-                  />
-                  {selectedDate && (
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={() => {
-                        setSelectedDate('')
-                        setSkip(0)
-                      }}
-                      title="Clear date filter"
-                    >
-                      <i className="fas fa-times"></i>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {loading ? (
             <div className="card-body text-center">
               <div className="spinner-border" role="status">
@@ -220,9 +130,9 @@ export default function EcgList({ onSelectSession }) {
           ) : sessions.length === 0 ? (
             <div className="card-body">
               <div className="text-center text-muted py-5">
-                <i className="fas fa-filter fa-3x mb-3"></i>
-                <p>No sessions match the selected filters</p>
-                <small>Try adjusting your filter criteria</small>
+                <i className="fas fa-inbox fa-3x mb-3"></i>
+                <p>No ECG sessions found</p>
+                <small>Record your first ECG session to get started</small>
               </div>
             </div>
           ) : (
@@ -251,7 +161,7 @@ export default function EcgList({ onSelectSession }) {
                           </div>
                           <div className="col-6">
                             <small className="text-muted">Samples</small>
-                            <p className="text-info">{session.samples?.length || 0}</p>
+                            <p className="text-info">{session.sampleCount || 0}</p>
                           </div>
                         </div>
                       </div>
@@ -291,15 +201,7 @@ export default function EcgList({ onSelectSession }) {
             <div className="card-footer">
               <div className="mb-3">
                 <small className="text-muted">
-                  Showing {skip + 1}-{skip + sessions.length} of {allSessions.filter(s => {
-                    let include = true
-                    if (selectedClassification) include = include && s.classification === selectedClassification
-                    if (selectedDate) {
-                      const selectedDateObj = new Date(selectedDate)
-                      include = include && new Date(s.recordedAt).toLocaleDateString() === selectedDateObj.toLocaleDateString()
-                    }
-                    return include
-                  }).length} sessions
+                  Showing {sessions.length > 0 ? skip + 1 : 0}-{skip + sessions.length} sessions
                 </small>
               </div>
               <nav aria-label="Page navigation">
@@ -318,11 +220,11 @@ export default function EcgList({ onSelectSession }) {
                       Page {Math.floor(skip / take) + 1}
                     </span>
                   </li>
-                  <li className={`page-item ${sessions.length < take ? 'disabled' : ''}`}>
+                  <li className={`page-item ${!hasMore ? 'disabled' : ''}`}>
                     <button
                       className="page-link"
                       onClick={() => setSkip(skip + take)}
-                      disabled={sessions.length < take}
+                      disabled={!hasMore}
                     >
                       Next<i className="fas fa-chevron-right ml-2"></i>
                     </button>

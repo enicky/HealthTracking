@@ -71,6 +71,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(255);
 
+        builder.Property(u => u.PasswordHash)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        builder.Property(u => u.Role)
+            .IsRequired()
+            .HasDefaultValue(UserRole.User)
+            .HasSentinel(UserRole.User);
+
         builder.Property(u => u.CreatedAt)
             .IsRequired()
             .HasDefaultValueSql("CURRENT_TIMESTAMP");

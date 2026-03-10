@@ -12,16 +12,19 @@ export default function Dashboard() {
   const [infoModal, setInfoModal] = useState({ open: false, title: '', content: '' })
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    if (tenantId && userId) {
+      fetchData()
+    }
+  }, [tenantId, userId])
 
   async function fetchData() {
     try {
       setLoading(true)
       setError(null)
+      // Fetch ALL records (9999 is practical limit) without samples for accurate statistics
       const [ecg, bp] = await Promise.all([
-        apiService.getEcgSessions(tenantId, userId, 0, 1000),
-        apiService.getBloodPressureReadings(tenantId, userId, 0, 1000)
+        apiService.getEcgSessions(tenantId, userId, 0, 9999),
+        apiService.getBloodPressureReadings(tenantId, userId, 0, 9999)
       ])
       setEcgSessions(ecg || [])
       setBpReadings(bp || [])
