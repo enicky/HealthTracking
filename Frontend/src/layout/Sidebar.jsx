@@ -1,4 +1,14 @@
+import { useAuth } from '../context/AuthContext'
+
+const ROLE_NAMES = {
+  0: 'Super Admin',
+  1: 'Tenant Admin',
+  2: 'User',
+}
+
 export default function Sidebar({ onNavigate, currentRoute }) {
+  const { user, isSuperAdmin } = useAuth()
+
   return (
     <aside className="main-sidebar sidebar-dark-primary">
       {/* Brand Logo */}
@@ -14,7 +24,22 @@ export default function Sidebar({ onNavigate, currentRoute }) {
 
       {/* Sidebar */}
       <div className="sidebar">
-        {/* Sidebar user panel (optional) */}
+        {/* Sidebar user panel */}
+        <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div className="image">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=user"
+              className="img-circle elevation-2"
+              alt="User Image"
+            />
+          </div>
+          <div className="info">
+            <a href="#" className="d-block">
+              {user?.firstName} {user?.lastName}
+            </a>
+            <small className="text-muted">{ROLE_NAMES[user?.role] || 'Unknown'}</small>
+          </div>
+        </div>
         
         {/* Sidebar Menu */}
         <nav className="mt-2">
@@ -23,10 +48,10 @@ export default function Sidebar({ onNavigate, currentRoute }) {
             <li className="nav-item">
               <a
                 href="#"
-                className={`nav-link ${currentRoute === '' ? 'active' : ''}`}
+                className={`nav-link ${currentRoute === 'dashboard' ? 'active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault()
-                  onNavigate('')
+                  onNavigate('dashboard')
                 }}
               >
                 <i className="nav-icon fas fa-chart-line"></i>
@@ -63,6 +88,28 @@ export default function Sidebar({ onNavigate, currentRoute }) {
                 <p>ECG Sessions</p>
               </a>
             </li>
+
+            {/* Divider for admin section */}
+            {isSuperAdmin && (
+              <>
+                <li className="nav-header">SYSTEM ADMINISTRATION</li>
+
+                {/* Tenant Management - Super Admin Only */}
+                <li className="nav-item">
+                  <a
+                    href="#"
+                    className={`nav-link ${currentRoute === 'tenants' ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onNavigate('tenants')
+                    }}
+                  >
+                    <i className="nav-icon fas fa-building"></i>
+                    <p>Tenant Management</p>
+                  </a>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

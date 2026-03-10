@@ -26,16 +26,16 @@ export default function MainLayout({ children, onNavigate, currentRoute }) {
             {currentRoute === 'dashboard' && 'Dashboard'}
             {currentRoute === 'blood-pressure' && 'Blood Pressure'}
             {currentRoute === 'ecg' && 'ECG Sessions'}
-            {!currentRoute && 'Dashboard'}
-          </h1>
-        </div>
+          {currentRoute === 'tenants' && 'Tenant Management'}
+        </h1>
+      </div>
 
-        {/* Main content */}
-        <section className="content">
-          <div className="container-fluid">
-            {children}
-          </div>
-        </section>
+      {/* Content Section */}
+      <section className="content">
+        <div className="container-fluid">
+          {children}
+        </div>
+      </section>
       </div>
 
       {/* Footer */}

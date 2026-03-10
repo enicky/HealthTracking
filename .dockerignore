@@ -1,0 +1,12 @@
+.git
+.gitmodules
+.githooks
+.gitignore
+.github
+node_modules
+dist
+build
+.DS_Store
+*.log
+.env
+.env.local

@@ -148,6 +148,61 @@ html, body {
   border-left-color: #0056b3;
 }
 
+/* Nav header text improvements */
+.nav-sidebar .nav-header {
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 15px;
+  letter-spacing: 0.5px;
+  margin: 10px 0 5px 0;
+  opacity: 0.9;
+}
+
+/* User panel */
+.user-panel {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-panel .image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-panel .image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-panel .info {
+  flex: 1;
+}
+
+.user-panel .info a {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.user-panel .text-muted {
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+}
+
 .nav-icon {
   width: 20px;
   text-align: center;

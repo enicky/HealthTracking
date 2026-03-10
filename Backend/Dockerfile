@@ -1,5 +1,5 @@
-# Build stage - ARM64 compatible
-FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
 # Copy solution file and all project files
@@ -16,8 +16,8 @@ RUN dotnet restore "HealthPlatform.sln"
 # Publish the API project
 RUN dotnet publish "src/HealthPlatform.Api/HealthPlatform.Api.csproj" -c Release -o /app/publish --no-restore
 
-# Runtime stage - ARM64 compatible
-FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
 COPY --from=build /app/publish .

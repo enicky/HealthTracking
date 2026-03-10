@@ -10,20 +10,32 @@ export default function BloodPressureList() {
   const [error, setError] = useState(null)
   const [skip, setSkip] = useState(0)
   const [take] = useState(10)
+  const [hasMore, setHasMore] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [readingToDelete, setReadingToDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    fetchReadings()
-  }, [skip])
+    if (tenantId && userId) {
+      fetchReadings()
+    }
+  }, [skip, tenantId, userId])
 
   async function fetchReadings() {
     try {
       setLoading(true)
       setError(null)
-      const data = await apiService.getBloodPressureReadings(tenantId, userId, skip, take)
-      setReadings(data)
+      // Fetch one extra record to determine if there are more pages
+      const data = await apiService.getBloodPressureReadings(tenantId, userId, skip, take + 1)
+      
+      if (data.length > take) {
+        // More records exist, trim to page size
+        setReadings(data.slice(0, take))
+        setHasMore(true)
+      } else {
+        setReadings(data)
+        setHasMore(false)
+      }
     } catch (err) {
       setError(err.message)
       console.error('Failed to fetch blood pressure readings:', err)
@@ -197,11 +209,11 @@ export default function BloodPressureList() {
                       Page {Math.floor(skip / take) + 1}
                     </span>
                   </li>
-                  <li className={`page-item ${readings.length < take ? 'disabled' : ''}`}>
+                  <li className={`page-item ${!hasMore ? 'disabled' : ''}`}>
                     <button
                       className="page-link"
                       onClick={() => setSkip(skip + take)}
-                      disabled={readings.length < take}
+                      disabled={!hasMore}
                     >
                       Next<i className="fas fa-chevron-right ml-2"></i>
                     </button>

@@ -1,3 +1,4 @@
+using HealthPlatform.Application;
 using HealthPlatform.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,7 +42,7 @@ public class EcgController : ControllerBase
 
     /// <summary>Retrieves ECG sessions for the current user</summary>
     [HttpGet]
-    public async Task<ActionResult<List<EcgSessionDto>>> GetSessions([FromQuery] int skip = 0, [FromQuery] int take = 50)
+    public async Task<ActionResult<List<EcgSessionListDto>>> GetSessions([FromQuery] int skip = 0, [FromQuery] int take = 50)
     {
         try
         {

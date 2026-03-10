@@ -3,6 +3,8 @@ bin/
 obj/
 .git/
 .gitignore
+.gitmodules
+.github/
 .vs/
 .vscode/
 *.user

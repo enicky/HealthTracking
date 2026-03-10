@@ -73,7 +73,7 @@ public class EcgService : IEcgService
         return MapToDto(session);
     }
 
-    public async Task<IEnumerable<EcgSessionDto>> GetEcgSessionsAsync(int skip = 0, int take = 50)
+    public async Task<IEnumerable<EcgSessionListDto>> GetEcgSessionsAsync(int skip = 0, int take = 50)
     {
         var tenantId = _tenantService.GetCurrentTenantId();
         var userId = _tenantService.GetCurrentUserId();
@@ -90,7 +90,7 @@ public class EcgService : IEcgService
 
         _logger.LogInformation("Retrieved {SessionCount} ECG sessions from database", sessions.Count);
 
-        return sessions.Select(MapToDto);
+        return sessions.Select(MapToListDto);
     }
 
     public async Task<EcgSessionDto?> GetEcgSessionByIdAsync(Guid id)
@@ -132,6 +132,35 @@ public class EcgService : IEcgService
             Classification = session.Classification,
             AverageHeartRate = session.AverageHeartRate,
             Samples = System.Text.Json.JsonDocument.Parse(session.Samples.RootElement.GetRawText()).RootElement,
+            CreatedAt = session.CreatedAt
+        };
+    }
+
+    private static EcgSessionListDto MapToListDto(EcgSession session)
+    {
+        // Count samples in the JsonDocument
+        int sampleCount = 0;
+        try
+        {
+            var root = session.Samples.RootElement;
+            if (root.ValueKind == System.Text.Json.JsonValueKind.Array)
+            {
+                sampleCount = root.GetArrayLength();
+            }
+        }
+        catch
+        {
+            // If parsing fails, set count to 0
+            sampleCount = 0;
+        }
+
+        return new EcgSessionListDto
+        {
+            Id = session.Id,
+            RecordedAt = session.RecordedAt,
+            Classification = session.Classification,
+            AverageHeartRate = session.AverageHeartRate,
+            SampleCount = sampleCount,
             CreatedAt = session.CreatedAt
         };
     }

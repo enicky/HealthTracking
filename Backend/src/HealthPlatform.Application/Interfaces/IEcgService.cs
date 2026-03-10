@@ -8,7 +8,7 @@ namespace HealthPlatform.Application.Interfaces;
 public interface IEcgService
 {
     Task<EcgSessionDto> CreateEcgSessionAsync(CreateEcgSessionDto dto);
-    Task<IEnumerable<EcgSessionDto>> GetEcgSessionsAsync(int skip = 0, int take = 50);
+    Task<IEnumerable<EcgSessionListDto>> GetEcgSessionsAsync(int skip = 0, int take = 50);
     Task<EcgSessionDto?> GetEcgSessionByIdAsync(Guid id);
     Task<bool> DeleteEcgSessionAsync(Guid id);
 }
@@ -31,5 +31,16 @@ public class EcgSessionDto
     public string Classification { get; set; } = string.Empty;
     public int? AverageHeartRate { get; set; }
     public JsonElement Samples { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+/// <summary>DTO for ECG session list view (without samples)</summary>
+public class EcgSessionListDto
+{
+    public Guid Id { get; set; }
+    public DateTime RecordedAt { get; set; }
+    public string Classification { get; set; } = string.Empty;
+    public int? AverageHeartRate { get; set; }
+    public int SampleCount { get; set; }
     public DateTime CreatedAt { get; set; }
 }
