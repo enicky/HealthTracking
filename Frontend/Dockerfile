@@ -7,13 +7,13 @@ ARG VITE_API_URL=http://localhost:5001
 ENV VITE_API_URL=$VITE_API_URL
 
 # Copy package files
-COPY package*.json ./
+COPY Frontend/package*.json ./
 
 # Install dependencies with npm verbose output to show progress
 RUN npm install --verbose
 
 # Copy source code
-COPY . ./
+COPY Frontend/ ./
 
 # Build the React app with environment variables
 RUN npm run build
