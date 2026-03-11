@@ -11,6 +11,7 @@ public interface IBloodOxygenService
 public class CreateBloodOxygenReadingDto
 {
     public DateTime RecordedAt { get; set; }
+    public string RecordedAtDebug { get; set; } = string.Empty; // For logging raw input
     public double Percentage { get; set; }
 }
 
