@@ -23,6 +23,8 @@ builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEcgService, EcgService>();
 builder.Services.AddScoped<IBloodPressureService, BloodPressureService>();
+builder.Services.AddScoped<IBloodOxygenService, BloodOxygenService>();
+builder.Services.AddScoped<IWristTemperatureService, WristTemperatureService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add HTTP context accessor for tenant resolution

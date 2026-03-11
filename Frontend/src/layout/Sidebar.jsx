@@ -74,6 +74,36 @@ export default function Sidebar({ onNavigate, currentRoute }) {
               </a>
             </li>
 
+            {/* Blood Oxygen */}
+            <li className="nav-item">
+              <a
+                href="#"
+                className={`nav-link ${currentRoute === 'blood-oxygen' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  onNavigate('blood-oxygen')
+                }}
+              >
+                <i className="nav-icon fas fa-lungs"></i>
+                <p>Blood Oxygen</p>
+              </a>
+            </li>
+
+            {/* Wrist Temperature */}
+            <li className="nav-item">
+              <a
+                href="#"
+                className={`nav-link ${currentRoute === 'wrist-temperature' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  onNavigate('wrist-temperature')
+                }}
+              >
+                <i className="nav-icon fas fa-thermometer-half"></i>
+                <p>Wrist Temperature</p>
+              </a>
+            </li>
+
             {/* ECG Sessions */}
             <li className="nav-item">
               <a
