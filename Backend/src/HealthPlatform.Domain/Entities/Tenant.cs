@@ -11,4 +11,6 @@ public class Tenant
     public ICollection<User> Users { get; set; } = new List<User>();
     public ICollection<EcgSession> EcgSessions { get; set; } = new List<EcgSession>();
     public ICollection<BloodPressureReading> BloodPressureReadings { get; set; } = new List<BloodPressureReading>();
+    public ICollection<BloodOxygenReading> BloodOxygenReadings { get; set; } = new List<BloodOxygenReading>();
+    public ICollection<WristTemperatureReading> WristTemperatureReadings { get; set; } = new List<WristTemperatureReading>();
 }

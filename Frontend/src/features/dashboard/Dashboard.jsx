@@ -7,6 +7,8 @@ export default function Dashboard() {
   const { tenantId, userId } = useTenant()
   const [ecgSessions, setEcgSessions] = useState([])
   const [bpReadings, setBpReadings] = useState([])
+  const [boReadings, setBoReadings] = useState([])
+  const [wtReadings, setWtReadings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [infoModal, setInfoModal] = useState({ open: false, title: '', content: '' })
@@ -22,12 +24,16 @@ export default function Dashboard() {
       setLoading(true)
       setError(null)
       // Fetch ALL records (9999 is practical limit) without samples for accurate statistics
-      const [ecg, bp] = await Promise.all([
+      const [ecg, bp, bo, wt] = await Promise.all([
         apiService.getEcgSessions(tenantId, userId, 0, 9999),
-        apiService.getBloodPressureReadings(tenantId, userId, 0, 9999)
+        apiService.getBloodPressureReadings(tenantId, userId, 0, 9999),
+        apiService.getBloodOxygenReadings(tenantId, userId, 0, 9999),
+        apiService.getWristTemperatureReadings(tenantId, userId, 0, 9999)
       ])
       setEcgSessions(ecg || [])
       setBpReadings(bp || [])
+      setBoReadings(bo || [])
+      setWtReadings(wt || [])
     } catch (err) {
       setError(err.message)
       console.error('Failed to fetch dashboard data:', err)
@@ -41,9 +47,13 @@ export default function Dashboard() {
     const stats = {
       totalEcgSessions: ecgSessions.length,
       totalBpReadings: bpReadings.length,
+      totalBoReadings: boReadings.length,
+      totalWtReadings: wtReadings.length,
       avgHeartRate: 0,
       avgSystolic: 0,
       avgDiastolic: 0,
+      avgOxygen: 0,
+      avgTemperature: 0,
       classificationBreakdown: {}
     }
 
@@ -63,6 +73,16 @@ export default function Dashboard() {
       const totalDiastolic = bpReadings.reduce((sum, r) => sum + (r.diastolic || 0), 0)
       stats.avgSystolic = Math.round(totalSystolic / bpReadings.length)
       stats.avgDiastolic = Math.round(totalDiastolic / bpReadings.length)
+    }
+
+    if (boReadings.length > 0) {
+      const totalOxygen = boReadings.reduce((sum, r) => sum + (r.percentage || 0), 0)
+      stats.avgOxygen = (totalOxygen / boReadings.length).toFixed(1)
+    }
+
+    if (wtReadings.length > 0) {
+      const totalTemp = wtReadings.reduce((sum, r) => sum + (r.temperature || 0), 0)
+      stats.avgTemperature = (totalTemp / wtReadings.length).toFixed(1)
     }
 
     return stats
@@ -192,12 +212,127 @@ export default function Dashboard() {
     }))
   }
 
+  // Get Heart Rate vs Oxygen correlation
+  const getHeartRateOxygenCorrelation = () => {
+    const dateMap = {}
+
+    ecgSessions.forEach(session => {
+      const date = new Date(session.recordedAt).toLocaleDateString()
+      if (!dateMap[date]) {
+        dateMap[date] = { hrs: [], oxygens: [] }
+      }
+      if (session.averageHeartRate) dateMap[date].hrs.push(session.averageHeartRate)
+    })
+
+    boReadings.forEach(reading => {
+      const date = new Date(reading.recordedAt).toLocaleDateString()
+      if (dateMap[date]) {
+        dateMap[date].oxygens.push(reading.percentage)
+      }
+    })
+
+    return Object.entries(dateMap)
+      .filter(([_, data]) => data.hrs.length > 0 && data.oxygens.length > 0)
+      .map(([date, data]) => ({
+        date,
+        avgHr: Math.round(data.hrs.reduce((a, b) => a + b, 0) / data.hrs.length),
+        avgOx: (data.oxygens.reduce((a, b) => a + b, 0) / data.oxygens.length).toFixed(1)
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+  }
+
+  // Get Temperature vs Blood Pressure correlation
+  const getTemperatureBpCorrelation = () => {
+    const dateMap = {}
+
+    wtReadings.forEach(reading => {
+      const date = new Date(reading.recordedAt).toLocaleDateString()
+      if (!dateMap[date]) {
+        dateMap[date] = { temps: [], sysReadings: [], diaReadings: [] }
+      }
+      dateMap[date].temps.push(reading.temperature)
+    })
+
+    bpReadings.forEach(reading => {
+      const date = new Date(reading.recordedAt).toLocaleDateString()
+      if (dateMap[date]) {
+        dateMap[date].sysReadings.push(reading.systolic)
+        dateMap[date].diaReadings.push(reading.diastolic)
+      }
+    })
+
+    return Object.entries(dateMap)
+      .filter(([_, data]) => data.temps.length > 0 && data.sysReadings.length > 0)
+      .map(([date, data]) => ({
+        date,
+        avgTemp: (data.temps.reduce((a, b) => a + b, 0) / data.temps.length).toFixed(1),
+        avgSys: Math.round(data.sysReadings.reduce((a, b) => a + b, 0) / data.sysReadings.length)
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+  }
+
+  // Get daily oxygen readings trend
+  const getDailyOxygenData = () => {
+    const dailyData = {}
+    const fourteenDaysAgo = new Date()
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14)
+    fourteenDaysAgo.setHours(0, 0, 0, 0)
+    
+    boReadings.forEach(reading => {
+      const readingDate = new Date(reading.recordedAt)
+      if (readingDate >= fourteenDaysAgo) {
+        const date = readingDate.toLocaleDateString()
+        if (!dailyData[date]) {
+          dailyData[date] = []
+        }
+        dailyData[date].push(reading.percentage)
+      }
+    })
+
+    return Object.entries(dailyData)
+      .map(([date, values]) => ({
+        date,
+        avg: (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1)
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+  }
+
+  // Get daily temperature readings trend
+  const getDailyTemperatureData = () => {
+    const dailyData = {}
+    const fourteenDaysAgo = new Date()
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14)
+    fourteenDaysAgo.setHours(0, 0, 0, 0)
+    
+    wtReadings.forEach(reading => {
+      const readingDate = new Date(reading.recordedAt)
+      if (readingDate >= fourteenDaysAgo) {
+        const date = readingDate.toLocaleDateString()
+        if (!dailyData[date]) {
+          dailyData[date] = []
+        }
+        dailyData[date].push(reading.temperature)
+      }
+    })
+
+    return Object.entries(dailyData)
+      .map(([date, values]) => ({
+        date,
+        avg: (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1)
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+  }
+
   const stats = getStatistics()
   const dailyHR = getDailyHeartRateData()
   const dailyBP = getDailyBpData()
+  const dailyOx = getDailyOxygenData()
+  const dailyTemp = getDailyTemperatureData()
   const eshStats = getEshStatistics()
   const hrBpCorrelation = getHrBpCorrelation()
   const ecgBpCorr = getEcgBpCorrelation()
+  const hrOxCorrelation = getHeartRateOxygenCorrelation()
+  const tempBpCorrelation = getTemperatureBpCorrelation()
 
   const openInfoModal = (title, content) => {
     setInfoModal({ open: true, title, content })
@@ -279,6 +414,46 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        <div className="col-md-3 col-sm-6 col-12">
+          <div className="info-box bg-primary">
+            <span className="info-box-icon"><i className="fas fa-lungs"></i></span>
+            <div className="info-box-content">
+              <span className="info-box-text">Blood Oxygen Readings</span>
+              <span className="info-box-number">{stats.totalBoReadings}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-sm-6 col-12">
+          <div className="info-box" style={{ backgroundColor: '#17a2b8' }}>
+            <span className="info-box-icon"><i className="fas fa-lungs-virus"></i></span>
+            <div className="info-box-content">
+              <span className="info-box-text">Avg Oxygen</span>
+              <span className="info-box-number">{stats.avgOxygen} <small>%</small></span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-sm-6 col-12">
+          <div className="info-box" style={{ backgroundColor: '#ffc107' }}>
+            <span className="info-box-icon"><i className="fas fa-thermometer-half"></i></span>
+            <div className="info-box-content">
+              <span className="info-box-text">Temperature Readings</span>
+              <span className="info-box-number">{stats.totalWtReadings}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-sm-6 col-12">
+          <div className="info-box" style={{ backgroundColor: '#6f42c1' }}>
+            <span className="info-box-icon"><i className="fas fa-fire"></i></span>
+            <div className="info-box-content">
+              <span className="info-box-text">Avg Temperature</span>
+              <span className="info-box-number">{stats.avgTemperature} <small>°C</small></span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Charts */}
@@ -321,6 +496,142 @@ export default function Dashboard() {
               <div className="card-body">
                 <div className="chart-container" style={{ minHeight: '300px' }}>
                   <BloodPressureChart data={dailyBP} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Blood Oxygen Chart */}
+        {dailyOx.length > 0 && (
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-lungs mr-2"></i>Daily Average Blood Oxygen (Last 14 Days)
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('Daily Average Blood Oxygen', 'This chart shows your daily average oxygen saturation (SpO2) in percentage over the last 14 calendar days. Healthy oxygen levels are typically 95% or higher. Lower levels may indicate respiratory or circulatory issues and should be monitored.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="chart-container" style={{ minHeight: '300px' }}>
+                  <OxygenChart data={dailyOx} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Row 1.5: Wrist Temperature */}
+      <div className="row mt-3">
+        {/* Wrist Temperature Chart */}
+        {dailyTemp.length > 0 && (
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-thermometer-half mr-2"></i>Daily Average Wrist Temperature (Last 14 Days)
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('Daily Average Wrist Temperature', 'This chart displays your daily average wrist temperature in Celsius over the last 14 calendar days. Normal body temperature is around 36.5-37.5°C. Persistent elevation may indicate fever or infection.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="chart-container" style={{ minHeight: '300px' }}>
+                  <TemperatureChart data={dailyTemp} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Heart Rate vs Oxygen Correlation */}
+        {hrOxCorrelation.length > 0 && (
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-chart-scatter mr-2"></i>Heart Rate vs Oxygen Correlation
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('Heart Rate vs Oxygen Correlation', 'This chart shows the relationship between your average heart rate (left axis) and blood oxygen levels (right axis) for days when both measurements were recorded. An inverse correlation (HR up, O2 down) might indicate exercise or stress. Patterns here can help identify health trends.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="table-responsive">
+                  <table className="table table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th className="text-center">Avg HR (BPM)</th>
+                        <th className="text-center">Avg O₂ (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hrOxCorrelation.map((item) => (
+                        <tr key={item.date}>
+                          <td>{item.date}</td>
+                          <td className="text-center">
+                            <span style={{ color: '#28a745', fontWeight: 'bold' }}>{item.avgHr}</span>
+                          </td>
+                          <td className="text-center">
+                            <span style={{ color: '#17a2b8', fontWeight: 'bold' }}>{item.avgOx}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Row 1.75: Temperature vs BP Correlation */}
+      <div className="row mt-3">
+        {/* Temperature vs Systolic BP Correlation */}
+        {tempBpCorrelation.length > 0 && (
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-link mr-2"></i>Temperature vs Blood Pressure Correlation
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('Temperature vs Blood Pressure Correlation', 'This chart shows the relationship between your wrist temperature and blood pressure for days when both measurements were recorded. Fever often correlates with elevated blood pressure. Monitoring both together can help you understand your body\'s response to illness or stress.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="table-responsive">
+                  <table className="table table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th className="text-center">Avg Temp (°C)</th>
+                        <th className="text-center">Avg Sys BP (mmHg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tempBpCorrelation.map((item) => (
+                        <tr key={item.date}>
+                          <td>{item.date}</td>
+                          <td className="text-center">
+                            <span style={{ color: '#ff9800', fontWeight: 'bold' }}>{item.avgTemp}</span>
+                          </td>
+                          <td className="text-center">
+                            <span style={{ color: '#dc3545', fontWeight: 'bold' }}>{item.avgSys}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -878,6 +1189,202 @@ function HrBpCorrelationChart({ data }) {
     ctx.textAlign = 'center'
     ctx.fillText('Systolic BP (mmHg)', 0, 0)
     ctx.restore()
+  }, [data])
+
+  return <div ref={containerRef} style={{ width: '100%' }}><canvas ref={chartRef} style={{ width: '100%', height: 'auto', display: 'block' }} /></div>
+}
+
+function OxygenChart({ data }) {
+  const chartRef = React.useRef(null)
+  const containerRef = React.useRef(null)
+
+  React.useEffect(() => {
+    if (!chartRef.current || !containerRef.current || data.length === 0) return
+
+    const container = containerRef.current
+    const canvas = chartRef.current
+    const width = container.clientWidth - 10
+    const height = 350
+
+    canvas.width = width
+    canvas.height = height
+
+    const ctx = canvas.getContext('2d')
+
+    // Clear canvas
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, width, height)
+
+    const padding = 50
+    const chartWidth = width - padding * 2
+    const chartHeight = height - padding * 2
+
+    // Get min/max
+    const values = data.map(d => parseFloat(d.avg))
+    const minValue = Math.min(...values)
+    const maxValue = Math.max(...values)
+    const range = maxValue - minValue || 1
+
+    // Draw grid and axes
+    ctx.strokeStyle = '#eee'
+    ctx.lineWidth = 1
+    for (let i = 0; i <= 5; i++) {
+      const y = padding + (chartHeight / 5) * i
+      ctx.beginPath()
+      ctx.moveTo(padding, y)
+      ctx.lineTo(width - padding, y)
+      ctx.stroke()
+    }
+
+    // Draw axes
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(padding, padding)
+    ctx.lineTo(padding, height - padding)
+    ctx.lineTo(width - padding, height - padding)
+    ctx.stroke()
+
+    // Draw line chart
+    ctx.strokeStyle = '#17a2b8'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    data.forEach((point, i) => {
+      const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+      const normalizedValue = (parseFloat(point.avg) - minValue) / range
+      const y = height - padding - normalizedValue * chartHeight
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    })
+    ctx.stroke()
+
+    // Draw points
+    ctx.fillStyle = '#17a2b8'
+    data.forEach((point, i) => {
+      const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+      const normalizedValue = (parseFloat(point.avg) - minValue) / range
+      const y = height - padding - normalizedValue * chartHeight
+      ctx.beginPath()
+      ctx.arc(x, y, 4, 0, Math.PI * 2)
+      ctx.fill()
+    })
+
+    // Draw labels
+    ctx.fillStyle = '#666'
+    ctx.font = '12px Arial'
+    ctx.textAlign = 'center'
+    data.forEach((point, i) => {
+      if (i % Math.ceil(data.length / 6) === 0 || i === data.length - 1) {
+        const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+        ctx.fillText(new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), x, height - padding + 20)
+      }
+    })
+
+    // Y-axis labels
+    ctx.textAlign = 'right'
+    for (let i = 0; i <= 5; i++) {
+      const value = minValue + (range / 5) * i
+      const y = height - padding - (chartHeight / 5) * i
+      ctx.fillText(Math.round(value * 10) / 10, padding - 10, y + 4)
+    }
+  }, [data])
+
+  return <div ref={containerRef} style={{ width: '100%' }}><canvas ref={chartRef} style={{ width: '100%', height: 'auto', display: 'block' }} /></div>
+}
+
+function TemperatureChart({ data }) {
+  const chartRef = React.useRef(null)
+  const containerRef = React.useRef(null)
+
+  React.useEffect(() => {
+    if (!chartRef.current || !containerRef.current || data.length === 0) return
+
+    const container = containerRef.current
+    const canvas = chartRef.current
+    const width = container.clientWidth - 10
+    const height = 350
+
+    canvas.width = width
+    canvas.height = height
+
+    const ctx = canvas.getContext('2d')
+
+    // Clear canvas
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, width, height)
+
+    const padding = 50
+    const chartWidth = width - padding * 2
+    const chartHeight = height - padding * 2
+
+    // Get min/max
+    const values = data.map(d => parseFloat(d.avg))
+    const minValue = Math.min(...values)
+    const maxValue = Math.max(...values)
+    const range = maxValue - minValue || 1
+
+    // Draw grid and axes
+    ctx.strokeStyle = '#eee'
+    ctx.lineWidth = 1
+    for (let i = 0; i <= 5; i++) {
+      const y = padding + (chartHeight / 5) * i
+      ctx.beginPath()
+      ctx.moveTo(padding, y)
+      ctx.lineTo(width - padding, y)
+      ctx.stroke()
+    }
+
+    // Draw axes
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(padding, padding)
+    ctx.lineTo(padding, height - padding)
+    ctx.lineTo(width - padding, height - padding)
+    ctx.stroke()
+
+    // Draw line chart
+    ctx.strokeStyle = '#fd7e14'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    data.forEach((point, i) => {
+      const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+      const normalizedValue = (parseFloat(point.avg) - minValue) / range
+      const y = height - padding - normalizedValue * chartHeight
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    })
+    ctx.stroke()
+
+    // Draw points
+    ctx.fillStyle = '#fd7e14'
+    data.forEach((point, i) => {
+      const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+      const normalizedValue = (parseFloat(point.avg) - minValue) / range
+      const y = height - padding - normalizedValue * chartHeight
+      ctx.beginPath()
+      ctx.arc(x, y, 4, 0, Math.PI * 2)
+      ctx.fill()
+    })
+
+    // Draw labels
+    ctx.fillStyle = '#666'
+    ctx.font = '12px Arial'
+    ctx.textAlign = 'center'
+    data.forEach((point, i) => {
+      if (i % Math.ceil(data.length / 6) === 0 || i === data.length - 1) {
+        const x = padding + (chartWidth / (data.length - 1 || 1)) * i
+        ctx.fillText(new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), x, height - padding + 20)
+      }
+    })
+
+    // Y-axis labels
+    ctx.textAlign = 'right'
+    for (let i = 0; i <= 5; i++) {
+      const value = minValue + (range / 5) * i
+      const y = height - padding - (chartHeight / 5) * i
+      ctx.fillText(Math.round(value * 10) / 10, padding - 10, y + 4)
+    }
   }, [data])
 
   return <div ref={containerRef} style={{ width: '100%' }}><canvas ref={chartRef} style={{ width: '100%', height: 'auto', display: 'block' }} /></div>

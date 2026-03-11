@@ -242,6 +242,164 @@ export const apiService = {
     }
   },
 
+  /**
+   * Get all blood oxygen readings for the current user
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {number} skip - Number of records to skip (for pagination)
+   * @param {number} take - Number of records to take (for pagination)
+   * @returns {Promise<Array>}
+   */
+  async getBloodOxygenReadings(tenantId, userId, skip = 0, take = 10) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/bloodoxygen?skip=${skip}&take=${take}`,
+        {
+          method: 'GET',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching blood oxygen readings:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Get a specific blood oxygen reading by ID
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {string} readingId
+   * @returns {Promise<Object>}
+   */
+  async getBloodOxygenReadingById(tenantId, userId, readingId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/bloodoxygen/${readingId}`,
+        {
+          method: 'GET',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching blood oxygen reading:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Delete a blood oxygen reading by ID
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {string} readingId
+   * @returns {Promise<void>}
+   */
+  async deleteBloodOxygenReading(tenantId, userId, readingId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/bloodoxygen/${readingId}`,
+        {
+          method: 'DELETE',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json().catch(() => ({}))
+    } catch (error) {
+      console.error('Error deleting blood oxygen reading:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Get all wrist temperature readings for the current user
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {number} skip - Number of records to skip (for pagination)
+   * @param {number} take - Number of records to take (for pagination)
+   * @returns {Promise<Array>}
+   */
+  async getWristTemperatureReadings(tenantId, userId, skip = 0, take = 10) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/wristtemperature?skip=${skip}&take=${take}`,
+        {
+          method: 'GET',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching wrist temperature readings:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Get a specific wrist temperature reading by ID
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {string} readingId
+   * @returns {Promise<Object>}
+   */
+  async getWristTemperatureReadingById(tenantId, userId, readingId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/wristtemperature/${readingId}`,
+        {
+          method: 'GET',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching wrist temperature reading:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Delete a wrist temperature reading by ID
+   * @param {string} tenantId
+   * @param {string} userId
+   * @param {string} readingId
+   * @returns {Promise<void>}
+   */
+  async deleteWristTemperatureReading(tenantId, userId, readingId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/wristtemperature/${readingId}`,
+        {
+          method: 'DELETE',
+          headers: createHeaders(tenantId, userId),
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return await response.json().catch(() => ({}))
+    } catch (error) {
+      console.error('Error deleting wrist temperature reading:', error)
+      throw error
+    }
+  },
+
   // Tenant Management APIs (Super Admin only)
 
   /**

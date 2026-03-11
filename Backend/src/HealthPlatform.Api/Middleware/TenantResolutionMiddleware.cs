@@ -22,9 +22,11 @@ public class TenantResolutionMiddleware
         var tenantId = context.Request.Headers["X-Tenant-Id"].FirstOrDefault();
         var userId = context.Request.Headers["X-User-Id"].FirstOrDefault();
 
+        _logger.LogInformation("TenantResolutionMiddleware: Received headers - X-Tenant-Id={TenantId}, X-User-Id={UserId}", tenantId, userId);
+
         if (!Guid.TryParse(tenantId, out var parsedTenantId))
         {
-            _logger.LogWarning("Invalid or missing X-Tenant-Id header");
+            _logger.LogWarning("Invalid or missing X-Tenant-Id header: {TenantId}", tenantId);
             context.Response.StatusCode = 400;
             await context.Response.WriteAsJsonAsync(new { error = "Invalid or missing X-Tenant-Id header" });
             return;
@@ -32,7 +34,7 @@ public class TenantResolutionMiddleware
 
         if (!Guid.TryParse(userId, out var parsedUserId))
         {
-            _logger.LogWarning("Invalid or missing X-User-Id header");
+            _logger.LogWarning("Invalid or missing X-User-Id header: {UserId}", userId);
             context.Response.StatusCode = 400;
             await context.Response.WriteAsJsonAsync(new { error = "Invalid or missing X-User-Id header" });
             return;

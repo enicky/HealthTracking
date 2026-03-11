@@ -17,4 +17,6 @@ public class User
     public Tenant? Tenant { get; set; }
     public ICollection<EcgSession> EcgSessions { get; set; } = new List<EcgSession>();
     public ICollection<BloodPressureReading> BloodPressureReadings { get; set; } = new List<BloodPressureReading>();
+    public ICollection<BloodOxygenReading> BloodOxygenReadings { get; set; } = new List<BloodOxygenReading>();
+    public ICollection<WristTemperatureReading> WristTemperatureReadings { get; set; } = new List<WristTemperatureReading>();
 }

@@ -41,6 +41,16 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
             .HasForeignKey(b => b.TenantId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(t => t.BloodOxygenReadings)
+            .WithOne(bo => bo.Tenant)
+            .HasForeignKey(bo => bo.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(t => t.WristTemperatureReadings)
+            .WithOne(wt => wt.Tenant)
+            .HasForeignKey(wt => wt.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Indexes
         builder.HasIndex(t => t.Name)
             .IsUnique();
@@ -102,6 +112,16 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.BloodPressureReadings)
             .WithOne(b => b.User)
             .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(u => u.BloodOxygenReadings)
+            .WithOne(bo => bo.User)
+            .HasForeignKey(bo => bo.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(u => u.WristTemperatureReadings)
+            .WithOne(wt => wt.User)
+            .HasForeignKey(wt => wt.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
@@ -218,6 +238,108 @@ public class BloodPressureReadingConfiguration : IEntityTypeConfiguration<BloodP
             .IsDescending(false, false, true);
 
         builder.HasIndex(b => b.DeletedAt)
+            .HasFilter("\"DeletedAt\" IS NULL");
+    }
+}
+
+public class BloodOxygenReadingConfiguration : IEntityTypeConfiguration<BloodOxygenReading>
+{
+    public void Configure(EntityTypeBuilder<BloodOxygenReading> builder)
+    {
+        builder.HasKey(bo => bo.Id);
+
+        builder.Property(bo => bo.Id)
+            .ValueGeneratedNever();
+
+        builder.Property(bo => bo.TenantId)
+            .IsRequired();
+
+        builder.Property(bo => bo.UserId)
+            .IsRequired();
+
+        builder.Property(bo => bo.RecordedAt)
+            .IsRequired();
+
+        builder.Property(bo => bo.Percentage)
+            .IsRequired()
+            .HasPrecision(5, 2);
+
+        builder.Property(bo => bo.CreatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        builder.Property(bo => bo.UpdatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        // Relationships
+        builder.HasOne(bo => bo.Tenant)
+            .WithMany(t => t.BloodOxygenReadings)
+            .HasForeignKey(bo => bo.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(bo => bo.User)
+            .WithMany(u => u.BloodOxygenReadings)
+            .HasForeignKey(bo => bo.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Indexes
+        builder.HasIndex(bo => new { bo.TenantId, bo.UserId, bo.RecordedAt })
+            .HasDatabaseName("idx_bo_tenant_user_time")
+            .IsDescending(false, false, true);
+
+        builder.HasIndex(bo => bo.DeletedAt)
+            .HasFilter("\"DeletedAt\" IS NULL");
+    }
+}
+
+public class WristTemperatureReadingConfiguration : IEntityTypeConfiguration<WristTemperatureReading>
+{
+    public void Configure(EntityTypeBuilder<WristTemperatureReading> builder)
+    {
+        builder.HasKey(wt => wt.Id);
+
+        builder.Property(wt => wt.Id)
+            .ValueGeneratedNever();
+
+        builder.Property(wt => wt.TenantId)
+            .IsRequired();
+
+        builder.Property(wt => wt.UserId)
+            .IsRequired();
+
+        builder.Property(wt => wt.RecordedAt)
+            .IsRequired();
+
+        builder.Property(wt => wt.Temperature)
+            .IsRequired()
+            .HasPrecision(5, 2);
+
+        builder.Property(wt => wt.CreatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        builder.Property(wt => wt.UpdatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        // Relationships
+        builder.HasOne(wt => wt.Tenant)
+            .WithMany(t => t.WristTemperatureReadings)
+            .HasForeignKey(wt => wt.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(wt => wt.User)
+            .WithMany(u => u.WristTemperatureReadings)
+            .HasForeignKey(wt => wt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Indexes
+        builder.HasIndex(wt => new { wt.TenantId, wt.UserId, wt.RecordedAt })
+            .HasDatabaseName("idx_wt_tenant_user_time")
+            .IsDescending(false, false, true);
+
+        builder.HasIndex(wt => wt.DeletedAt)
             .HasFilter("\"DeletedAt\" IS NULL");
     }
 }

@@ -4,6 +4,7 @@ using System.Text.Json;
 using HealthPlatform.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(HealthDbContext))]
-    partial class HealthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260311083601_AddBloodOxygenReading")]
+    partial class AddBloodOxygenReading
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,51 +259,6 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("HealthPlatform.Domain.Entities.WristTemperatureReading", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("RecordedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<double>("Temperature")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeletedAt")
-                        .HasFilter("\"DeletedAt\" IS NULL");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("TenantId", "UserId", "RecordedAt")
-                        .IsDescending(false, false, true)
-                        .HasDatabaseName("idx_wt_tenant_user_time");
-
-                    b.ToTable("WristTemperatureReadings");
-                });
-
             modelBuilder.Entity("HealthPlatform.Domain.Entities.BloodOxygenReading", b =>
                 {
                     b.HasOne("HealthPlatform.Domain.Entities.Tenant", "Tenant")
@@ -369,25 +327,6 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("HealthPlatform.Domain.Entities.WristTemperatureReading", b =>
-                {
-                    b.HasOne("HealthPlatform.Domain.Entities.Tenant", "Tenant")
-                        .WithMany("WristTemperatureReadings")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HealthPlatform.Domain.Entities.User", "User")
-                        .WithMany("WristTemperatureReadings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Tenant", b =>
                 {
                     b.Navigation("BloodOxygenReadings");
@@ -397,8 +336,6 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("EcgSessions");
 
                     b.Navigation("Users");
-
-                    b.Navigation("WristTemperatureReadings");
                 });
 
             modelBuilder.Entity("HealthPlatform.Domain.Entities.User", b =>
@@ -408,8 +345,6 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("BloodPressureReadings");
 
                     b.Navigation("EcgSessions");
-
-                    b.Navigation("WristTemperatureReadings");
                 });
 #pragma warning restore 612, 618
         }
