@@ -34,6 +34,16 @@ public class WristTemperatureService : IWristTemperatureService
         if (user == null)
             throw new UnauthorizedAccessException("User not found or does not belong to tenant");
 
+        // Check for duplicate RecordedAt
+        var existingReading = await _context.WristTemperatureReadings
+            .FirstOrDefaultAsync(r => r.TenantId == tenantId && r.UserId == userId && r.RecordedAt == dto.RecordedAt && r.DeletedAt == null);
+        
+        if (existingReading != null)
+        {
+            _logger.LogWarning("Duplicate wrist temperature reading detected for RecordedAt: {RecordedAt}", dto.RecordedAt);
+            throw new InvalidOperationException($"A wrist temperature reading already exists for {dto.RecordedAt:O}");
+        }
+
         var reading = new WristTemperatureReading
         {
             Id = Guid.NewGuid(),
