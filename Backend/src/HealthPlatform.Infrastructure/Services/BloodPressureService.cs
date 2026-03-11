@@ -34,6 +34,16 @@ public class BloodPressureService : IBloodPressureService
         if (user == null)
             throw new UnauthorizedAccessException("User not found or does not belong to tenant");
 
+        // Check for duplicate RecordedAt
+        var existingReading = await _context.BloodPressureReadings
+            .FirstOrDefaultAsync(r => r.TenantId == tenantId && r.UserId == userId && r.RecordedAt == dto.RecordedAt && r.DeletedAt == null);
+        
+        if (existingReading != null)
+        {
+            _logger.LogWarning("Duplicate blood pressure reading detected for RecordedAt: {RecordedAt}. Returning existing reading.", dto.RecordedAt);
+            return MapToDto(existingReading);
+        }
+
         var reading = new BloodPressureReading
         {
             Id = Guid.NewGuid(),

@@ -32,11 +32,6 @@ public class WristTemperatureController : ControllerBase
             _logger.LogWarning("Unauthorized access: {Message}", ex.Message);
             return BadRequest(new { error = ex.Message });
         }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning("Duplicate reading detected: {Message}", ex.Message);
-            return Conflict(new { error = ex.Message });
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating wrist temperature reading");

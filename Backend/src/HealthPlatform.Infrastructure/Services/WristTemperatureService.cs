@@ -40,8 +40,8 @@ public class WristTemperatureService : IWristTemperatureService
         
         if (existingReading != null)
         {
-            _logger.LogWarning("Duplicate wrist temperature reading detected for RecordedAt: {RecordedAt}", dto.RecordedAt);
-            throw new InvalidOperationException($"A wrist temperature reading already exists for {dto.RecordedAt:O}");
+            _logger.LogWarning("Duplicate wrist temperature reading detected for RecordedAt: {RecordedAt}. Returning existing reading.", dto.RecordedAt);
+            return MapToDto(existingReading);
         }
 
         var reading = new WristTemperatureReading

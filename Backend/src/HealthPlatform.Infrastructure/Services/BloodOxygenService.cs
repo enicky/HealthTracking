@@ -40,8 +40,8 @@ public class BloodOxygenService : IBloodOxygenService
         
         if (existingReading != null)
         {
-            _logger.LogWarning("Duplicate blood oxygen reading detected for RecordedAt: {RecordedAt}", dto.RecordedAt);
-            throw new InvalidOperationException($"A blood oxygen reading already exists for {dto.RecordedAt:O}");
+            _logger.LogWarning("Duplicate blood oxygen reading detected for RecordedAt: {RecordedAt}. Returning existing reading.", dto.RecordedAt);
+            return MapToDto(existingReading);
         }
 
         var reading = new BloodOxygenReading
