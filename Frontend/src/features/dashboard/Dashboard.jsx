@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDate } from '../../utils/dateFormatter'
 import './Dashboard.css'
 
 export default function Dashboard() {
@@ -97,7 +98,7 @@ export default function Dashboard() {
     ecgSessions.forEach(session => {
       const sessionDate = new Date(session.recordedAt)
       if (sessionDate >= fourteenDaysAgo) {
-        const date = sessionDate.toLocaleDateString()
+        const date = formatDate(session.recordedAt)
         if (!dailyData[date]) {
           dailyData[date] = { sum: 0, count: 0 }
         }
@@ -123,7 +124,7 @@ export default function Dashboard() {
     bpReadings.forEach(reading => {
       const readingDate = new Date(reading.recordedAt)
       if (readingDate >= fourteenDaysAgo) {
-        const date = readingDate.toLocaleDateString()
+        const date = formatDate(reading.recordedAt)
         if (!dailyData[date]) {
           dailyData[date] = { systolic: [], diastolic: [] }
         }
@@ -174,7 +175,7 @@ export default function Dashboard() {
     })
 
     bpReadings.forEach(reading => {
-      const date = new Date(reading.recordedAt).toLocaleDateString()
+      const date = formatDate(reading.recordedAt)
       if (!dateMap[date]) {
         dateMap[date] = { hrs: [], sysReadings: [], diaReadings: [] }
       }
@@ -225,7 +226,7 @@ export default function Dashboard() {
     })
 
     boReadings.forEach(reading => {
-      const date = new Date(reading.recordedAt).toLocaleDateString()
+      const date = formatDate(reading.recordedAt)
       if (dateMap[date]) {
         dateMap[date].oxygens.push(reading.percentage)
       }
@@ -246,7 +247,7 @@ export default function Dashboard() {
     const dateMap = {}
 
     wtReadings.forEach(reading => {
-      const date = new Date(reading.recordedAt).toLocaleDateString()
+      const date = formatDate(reading.recordedAt)
       if (!dateMap[date]) {
         dateMap[date] = { temps: [], sysReadings: [], diaReadings: [] }
       }
@@ -254,7 +255,7 @@ export default function Dashboard() {
     })
 
     bpReadings.forEach(reading => {
-      const date = new Date(reading.recordedAt).toLocaleDateString()
+      const date = formatDate(reading.recordedAt)
       if (dateMap[date]) {
         dateMap[date].sysReadings.push(reading.systolic)
         dateMap[date].diaReadings.push(reading.diastolic)
@@ -281,7 +282,7 @@ export default function Dashboard() {
     boReadings.forEach(reading => {
       const readingDate = new Date(reading.recordedAt)
       if (readingDate >= fourteenDaysAgo) {
-        const date = readingDate.toLocaleDateString()
+        const date = formatDate(reading.recordedAt)
         if (!dailyData[date]) {
           dailyData[date] = []
         }
@@ -307,7 +308,7 @@ export default function Dashboard() {
     wtReadings.forEach(reading => {
       const readingDate = new Date(reading.recordedAt)
       if (readingDate >= fourteenDaysAgo) {
-        const date = readingDate.toLocaleDateString()
+        const date = formatDate(reading.recordedAt)
         if (!dailyData[date]) {
           dailyData[date] = []
         }
@@ -501,7 +502,10 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+      </div>
 
+      {/* Row: Blood Oxygen & Wrist Temperature */}
+      <div className="row mt-3">
         {/* Blood Oxygen Chart */}
         {dailyOx.length > 0 && (
           <div className="col-lg-6">
@@ -523,10 +527,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-      </div>
 
-      {/* Row 1.5: Wrist Temperature */}
-      <div className="row mt-3">
         {/* Wrist Temperature Chart */}
         {dailyTemp.length > 0 && (
           <div className="col-lg-6">
@@ -548,7 +549,10 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+      </div>
 
+      {/* Row: Heart Rate vs Oxygen Correlation & Temperature vs BP Correlation */}
+      <div className="row mt-3">
         {/* Heart Rate vs Oxygen Correlation */}
         {hrOxCorrelation.length > 0 && (
           <div className="col-lg-6">

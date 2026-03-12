@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatDate } from '../../utils/dateFormatter'
 import './TenantList.css'
 
 export default function TenantList({ tenants, loading, onEdit, onDelete, onSelect }) {
@@ -49,10 +50,10 @@ export default function TenantList({ tenants, loading, onEdit, onDelete, onSelec
                 <td>
                   <span className="badge bg-info">{tenant.userCount}</span>
                 </td>
-                <td>{new Date(tenant.createdAt).toLocaleDateString()}</td>
+                <td>{formatDate(tenant.createdAt)}</td>
                 <td>
                   {tenant.updatedAt
-                    ? new Date(tenant.updatedAt).toLocaleDateString()
+                    ? formatDate(tenant.updatedAt)
                     : '-'}
                 </td>
                 <td>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDateTime } from '../../utils/dateFormatter'
 import './BloodOxygenList.css'
 
 export default function BloodOxygenList() {
@@ -150,7 +151,7 @@ export default function BloodOxygenList() {
                     return (
                       <tr key={reading.id} className={`oxygen-${level}`}>
                         <td>
-                          {new Date(reading.recordedAt).toLocaleString()}
+                          {formatDateTime(reading.recordedAt)}
                         </td>
                         <td className="text-center">
                           <span className={`badge badge-oxygen-${level}`}>
@@ -219,7 +220,7 @@ export default function BloodOxygenList() {
                 <p>Are you sure you want to delete this blood oxygen reading?</p>
                 {readingToDelete && (
                   <p className="text-muted">
-                    {new Date(readingToDelete.recordedAt).toLocaleString()} - {readingToDelete.percentage}%
+                    {formatDateTime(readingToDelete.recordedAt)} - {readingToDelete.percentage}%
                   </p>
                 )}
               </div>

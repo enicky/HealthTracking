@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDateTime } from '../../utils/dateFormatter'
 import './WristTemperatureList.css'
 
 export default function WristTemperatureList() {
@@ -143,7 +144,7 @@ export default function WristTemperatureList() {
                     return (
                       <tr key={reading.id} className={`temp-${status}`}>
                         <td>
-                          {new Date(reading.recordedAt).toLocaleString()}
+                          {formatDateTime(reading.recordedAt)}
                         </td>
                         <td className="text-center">
                           <span className={`badge badge-temp-${status}`}>
@@ -212,7 +213,7 @@ export default function WristTemperatureList() {
                 <p>Are you sure you want to delete this wrist temperature reading?</p>
                 {readingToDelete && (
                   <p className="text-muted">
-                    {new Date(readingToDelete.recordedAt).toLocaleString()} - {readingToDelete.temperature}°C
+                    {formatDateTime(readingToDelete.recordedAt)} - {readingToDelete.temperature}°C
                   </p>
                 )}
               </div>

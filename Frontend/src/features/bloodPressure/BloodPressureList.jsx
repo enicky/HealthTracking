@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDateTime } from '../../utils/dateFormatter'
 import './BloodPressureList.css'
 
 export default function BloodPressureList() {
@@ -158,7 +159,7 @@ export default function BloodPressureList() {
                     return (
                       <tr key={reading.id} className={`reading-${category}`}>
                         <td>
-                          <small>{new Date(reading.recordedAt).toLocaleString()}</small>
+                          <small>{formatDateTime(reading.recordedAt)}</small>
                         </td>
                         <td className="text-center">
                           <strong>{reading.systolic}</strong>
@@ -242,7 +243,7 @@ export default function BloodPressureList() {
                   <div className="alert alert-warning">
                     <strong>{readingToDelete.systolic}/{readingToDelete.diastolic}</strong> mmHg 
                     <br />
-                    <small>Recorded: {new Date(readingToDelete.recordedAt).toLocaleString()}</small>
+                    <small>Recorded: {formatDateTime(readingToDelete.recordedAt)}</small>
                   </div>
                 )}
                 <p className="text-muted small">This action cannot be undone.</p>

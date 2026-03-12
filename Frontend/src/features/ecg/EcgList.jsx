@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDateTime } from '../../utils/dateFormatter'
 import './EcgList.css'
 
 const PAGINATION_STORAGE_KEY = 'ecg_sessions_page'
@@ -143,7 +144,7 @@ export default function EcgList({ onSelectSession }) {
                     <div className="card card-outline card-primary">
                       <div className="card-header">
                         <h5 className="card-title">
-                          {new Date(session.recordedAt).toLocaleString()}
+                          {formatDateTime(session.recordedAt)}
                         </h5>
                         <div className="card-tools">
                           <span className={`badge ${getClassificationBadgeClass(session.classification)}`}>

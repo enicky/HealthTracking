@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatDate } from '../../utils/dateFormatter'
 import './UserList.css'
 
 export default function UserList({
@@ -79,7 +80,7 @@ export default function UserList({
                       {getRoleBadge(user.role)}
                     </span>
                   </td>
-                  <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td>{formatDate(user.createdAt)}</td>
                   <td>
                     <button
                       className="btn btn-xs btn-info mr-1"

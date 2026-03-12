@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { apiService } from '../../services/api'
 import { useTenant } from '../../hooks/useTenant'
+import { formatDateTime } from '../../utils/dateFormatter'
 import './EcgDetail.css'
 
 // Import Flot
@@ -378,7 +379,7 @@ export default function EcgDetail({ sessionId, onBack }) {
                 <div className="col-md-3">
                   <b>Recording Date & Time</b>
                   <p className="text-muted">
-                    {new Date(session.recordedAt).toLocaleString()}
+                    {formatDateTime(session.recordedAt)}
                   </p>
                 </div>
                 <div className="col-md-3">
@@ -531,13 +532,13 @@ export default function EcgDetail({ sessionId, onBack }) {
                 <div className="col-md-4">
                   <b>Created</b>
                   <p className="text-muted">
-                    {new Date(session.createdAt).toLocaleString()}
+                    {formatDateTime(session.createdAt)}
                   </p>
                 </div>
                 <div className="col-md-4">
                   <b>Last Updated</b>
                   <p className="text-muted">
-                    {new Date(session.updatedAt).toLocaleString()}
+                    {formatDateTime(session.updatedAt)}
                   </p>
                 </div>
               </div>
