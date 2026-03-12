@@ -698,6 +698,51 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* Heart Rate vs Oxygen Correlation */}
+      {hrOxCorrelation.length > 0 && (
+        <div className="row mt-3">
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-link mr-2"></i>Heart Rate vs Oxygen Correlation
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('Heart Rate vs Oxygen Correlation', 'This table shows the relationship between your daily average heart rate and blood oxygen levels on days when both measurements were recorded. Each point represents one day. Higher heart rates sometimes correlate with lower oxygen levels during physical activity or illness.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="table-responsive">
+                  <table className="table table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th className="text-center">Avg HR (BPM)</th>
+                        <th className="text-center">Avg O2 (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hrOxCorrelation.map((item) => (
+                        <tr key={item.date}>
+                          <td>{item.date}</td>
+                          <td className="text-center">
+                            <span style={{ color: '#28a745', fontWeight: 'bold' }}>{item.avgHr}</span>
+                          </td>
+                          <td className="text-center">
+                            <span style={{ color: '#17a2b8', fontWeight: 'bold' }}>{item.avgOx}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Row 2: ECG Classification Tables (side-by-side) */}
       {(Object.keys(stats.classificationBreakdown).length > 0 || ecgBpCorr.length > 0) && (
         <div className="row mt-3">
