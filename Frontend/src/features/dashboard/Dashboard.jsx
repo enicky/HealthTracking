@@ -641,6 +641,61 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+
+        {/* ESH Blood Pressure Categories */}
+        {bpReadings.length > 0 && (
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header with-border d-flex align-items-center">
+                <h3 className="card-title">
+                  <i className="fas fa-heartbeat mr-2"></i>ESH Blood Pressure Categories
+                </h3>
+                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('ESH Blood Pressure Categories', 'This table classifies your blood pressure readings using the European Society of Hypertension (ESH) guidelines. Categories range from Optimal (lowest risk) to Grade 3 Hypertension (highest risk). Green indicates healthy readings, while red indicates hypertension requiring attention.')}
+                  style={{ color: '#6c757d', cursor: 'pointer' }}>
+                  <i className="fas fa-info-circle"></i>
+                </button>
+              </div>
+              <div className="card-body">
+                <div className="table-responsive">
+                  <table className="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th style={{ textAlign: 'center' }}>Count</th>
+                        <th style={{ textAlign: 'center' }}>Percentage</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { key: 'optimal', label: 'Optimal' },
+                        { key: 'normal', label: 'Normal' },
+                        { key: 'highNormal', label: 'High Normal' },
+                        { key: 'grade1', label: 'Grade 1 Hypertension' },
+                        { key: 'grade2', label: 'Grade 2 Hypertension' },
+                        { key: 'grade3', label: 'Grade 3 Hypertension' },
+                        { key: 'isolatedSystolic', label: 'Isolated Systolic HTN' }
+                      ]
+                        .filter(cat => eshStats[cat.key] > 0)
+                        .map(cat => (
+                          <tr key={cat.key}>
+                            <td>
+                              <span className={`badge ${getEshCategoryColor(cat.key)}`}>
+                                {cat.label}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>{eshStats[cat.key]}</td>
+                            <td style={{ textAlign: 'center' }}>
+                              {((eshStats[cat.key] / stats.totalBpReadings) * 100).toFixed(1)}%
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Row 2: ECG Classification Tables (side-by-side) */}
@@ -739,63 +794,6 @@ export default function Dashboard() {
               </div>
             </div>
           )}
-        </div>
-      )}
-
-      {/* Row 3: ESH Blood Pressure Categories */}
-      {bpReadings.length > 0 && (
-        <div className="row mt-3">
-          <div className="col-lg-6">
-            <div className="card">
-              <div className="card-header with-border d-flex align-items-center">
-                <h3 className="card-title">
-                  <i className="fas fa-heartbeat mr-2"></i>ESH Blood Pressure Categories
-                </h3>
-                <button className="btn btn-sm btn-link ms-auto" onClick={() => openInfoModal('ESH Blood Pressure Categories', 'This table classifies your blood pressure readings using the European Society of Hypertension (ESH) guidelines. Categories range from Optimal (lowest risk) to Grade 3 Hypertension (highest risk). Green indicates healthy readings, while red indicates hypertension requiring attention.')}
-                  style={{ color: '#6c757d', cursor: 'pointer' }}>
-                  <i className="fas fa-info-circle"></i>
-                </button>
-              </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Category</th>
-                        <th style={{ textAlign: 'center' }}>Count</th>
-                        <th style={{ textAlign: 'center' }}>Percentage</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        { key: 'optimal', label: 'Optimal' },
-                        { key: 'normal', label: 'Normal' },
-                        { key: 'highNormal', label: 'High Normal' },
-                        { key: 'grade1', label: 'Grade 1 Hypertension' },
-                        { key: 'grade2', label: 'Grade 2 Hypertension' },
-                        { key: 'grade3', label: 'Grade 3 Hypertension' },
-                        { key: 'isolatedSystolic', label: 'Isolated Systolic HTN' }
-                      ]
-                        .filter(cat => eshStats[cat.key] > 0)
-                        .map(cat => (
-                          <tr key={cat.key}>
-                            <td>
-                              <span className={`badge ${getEshCategoryColor(cat.key)}`}>
-                                {cat.label}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: 'center' }}>{eshStats[cat.key]}</td>
-                            <td style={{ textAlign: 'center' }}>
-                              {((eshStats[cat.key] / stats.totalBpReadings) * 100).toFixed(1)}%
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
